@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "960076920763",
+    "project_id": "ts-pay",
+    "storage_bucket": "ts-pay.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:960076920763:android:8f49c271d9d6600d61369e",
+        "android_client_info": {
+          "package_name": "com.tspay.tspay"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "960076920763-bov90cbbajdjkn6rjjfu9r6f8d1tv8cb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdFIv7QRSCqZCbvbhXk9hfTPtpH8qUfRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "960076920763-bov90cbbajdjkn6rjjfu9r6f8d1tv8cb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

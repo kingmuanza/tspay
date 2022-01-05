@@ -4,11 +4,14 @@ class Bouton extends StatefulWidget {
   final double largeur;
   final String nom;
   final Function action;
-  const Bouton({
+  bool? secondaire;
+
+  Bouton({
     Key? key,
     required this.largeur,
     required this.nom,
     required this.action,
+    bool? this.secondaire,
   }) : super(key: key);
 
   @override
@@ -24,7 +27,9 @@ class _BoutonState extends State<Bouton> {
       },
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all(
-          Colors.transparent,
+          widget.secondaire != null
+              ? Color.fromRGBO(0, 0, 34, 1)
+              : Colors.transparent,
         ),
         minimumSize: MaterialStateProperty.all(
           Size(
@@ -32,15 +37,25 @@ class _BoutonState extends State<Bouton> {
             50,
           ),
         ),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0.0),
-            side: BorderSide(
-              color: Colors.white,
-              width: 2.0,
-            ),
-          ),
-        ),
+        shape: widget.secondaire != null
+            ? MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 2.0,
+                  ),
+                ),
+              )
+            : MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 0.0,
+                  ),
+                ),
+              ),
       ),
       child: Text(
         widget.nom.toUpperCase(),

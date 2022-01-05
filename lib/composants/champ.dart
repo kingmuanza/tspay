@@ -7,11 +7,21 @@ class Champ extends StatefulWidget {
     required this.labelText,
     required this.controller,
     this.formKey,
+    this.clavier,
+    this.iconeBouton,
+    this.readOnly,
+    this.validator,
+    this.isPassword,
   }) : super(key: key);
 
   final String labelText;
   final TextEditingController controller;
   GlobalKey<FormState>? formKey;
+  TextInputType? clavier;
+  IconButton? iconeBouton;
+  bool? readOnly;
+  bool? isPassword;
+  String? Function(dynamic)? validator;
 
   @override
   _ChampState createState() => _ChampState();
@@ -25,15 +35,24 @@ class _ChampState extends State<Champ> {
       child: TextFormField(
         style: TextStyle(fontSize: 20, color: Colors.white),
         validator: (value) {
+          if (widget.validator != null) {
+            return widget.validator!(value);
+          }
           if (value == null || value.isEmpty) {
-            return 'Please enter some text';
+            return 'Champ obligatoire';
           }
           return null;
         },
+        obscureText: widget.isPassword != null ? widget.isPassword! : false,
+        keyboardType:
+            widget.clavier != null ? widget.clavier : TextInputType.text,
         autovalidateMode: AutovalidateMode.always,
         controller: widget.controller,
         cursorColor: Colors.white,
+        // enabled: false,
+        readOnly: widget.readOnly != null ? widget.readOnly! : false,
         decoration: InputDecoration(
+          suffixIcon: widget.iconeBouton,
           labelText: widget.labelText,
           labelStyle: TextStyle(
             fontSize: 20.0,

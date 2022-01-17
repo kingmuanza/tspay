@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/composants/bouton.dart';
-import 'package:tspay/inscription.formulaire.page.dart';
+import 'package:tspay/inscription.particulier.page.dart';
+import 'package:tspay/inscription.professionnel.page.dart';
 
 class InscriptionChoixPage extends StatefulWidget {
   const InscriptionChoixPage({Key? key}) : super(key: key);
@@ -53,7 +54,7 @@ class _InscriptionChoixPageState extends State<InscriptionChoixPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => InscriptionFormulairePage(),
+                      builder: (context) => InscriptionProfessionnelPage(),
                     ),
                   );
                 },
@@ -65,7 +66,14 @@ class _InscriptionChoixPageState extends State<InscriptionChoixPage> {
                 titre: "Compte Particulier",
                 contenu:
                     "Nunc fringilla, tortor eu venenatis tempor, purus sem suscipit ex, et dictum sem ligula ut velit. ",
-                action: () {},
+                action: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InscriptionParticulierPage(),
+                    ),
+                  );
+                },
               ),
             ),
           ],

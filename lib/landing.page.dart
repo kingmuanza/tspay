@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tspay/inscription.choix.page.dart';
 
 import 'composants/bouton.dart';
+import 'connexion.page.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({Key? key}) : super(key: key);
@@ -56,7 +57,7 @@ class _LandingPageState extends State<LandingPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => InscriptionChoixPage(),
+                      builder: (context) => ConnexionPage(),
                     ),
                   );
                 },
@@ -67,7 +68,14 @@ class _LandingPageState extends State<LandingPage> {
               padding: const EdgeInsets.only(top: 16.0),
               child: Bouton(
                 largeur: largeur,
-                action: () {},
+                action: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InscriptionChoixPage(),
+                    ),
+                  );
+                },
                 nom: "Inscription",
               ),
             ),

@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bcrypt/flutter_bcrypt.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:tspay/connexion.page.dart';
 
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
+import 'models/utilisateur.model.dart';
 
 class PasswordPage extends StatefulWidget {
   const PasswordPage({Key? key}) : super(key: key);
@@ -11,11 +16,14 @@ class PasswordPage extends StatefulWidget {
 }
 
 class _PasswordPageState extends State<PasswordPage> {
-  final _nomFormKey = GlobalKey<FormState>();
-  final _prenomFormKey = GlobalKey<FormState>();
-  TextEditingController nomController = TextEditingController(text: 'Muanza');
-  TextEditingController prenomController =
-      TextEditingController(text: 'Kangudie');
+  final LocalStorage storage = new LocalStorage('tspay');
+  final utilisateursFirebase =
+      FirebaseFirestore.instance.collection('utilisateurs');
+  final _passeFormKey = GlobalKey<FormState>();
+  final _confirmFormKey = GlobalKey<FormState>();
+  TextEditingController passeController = TextEditingController(text: 'Muanza');
+  TextEditingController confirmController =
+      TextEditingController(text: 'Muanza');
 
   bool checkedValue = false;
 
@@ -29,7 +37,14 @@ class _PasswordPageState extends State<PasswordPage> {
         largeur: double.infinity,
         nom: "Me connecter",
         secondaire: true,
-        action: () {},
+        action: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConnexionPage(),
+            ),
+          );
+        },
       ),
     );
 
@@ -74,16 +89,21 @@ class _PasswordPageState extends State<PasswordPage> {
               ),
               Champ(
                 labelText: 'Mot de passe',
-                formKey: _nomFormKey,
-                controller: nomController,
+                formKey: _passeFormKey,
+                controller: passeController,
                 clavier: TextInputType.visiblePassword,
                 isPassword: true,
               ),
               Champ(
                 labelText: 'Confirmation mot de passe',
-                formKey: _prenomFormKey,
-                controller: prenomController,
+                formKey: _confirmFormKey,
+                controller: confirmController,
                 isPassword: true,
+                validator: (value) {
+                  if (value != passeController.text) {
+                    return "Les mots de passe ne sont pas identiques";
+                  }
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 32.0),
@@ -91,7 +111,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   nom: "Terminer",
                   largeur: largeur / 2,
                   action: () {
-                    showAlertDialog(context);
+                    onFormSubmit();
                   },
                 ),
               ),
@@ -100,6 +120,33 @@ class _PasswordPageState extends State<PasswordPage> {
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  onFormSubmit() async {
+    if (_confirmFormKey.currentState!.validate() &&
+        _passeFormKey.currentState!.validate()) {
+      Map<String, dynamic> utilisateurMap = storage.getItem("utilisateur");
+      if (utilisateurMap != null) {
+        Utilisateur utilisateur = Utilisateur.fromMap(utilisateurMap);
+        print(utilisateur.toMap());
+
+        var salt10 = await FlutterBcrypt.saltWithRounds(rounds: 4);
+        debugPrint("salt10 " + salt10);
+        var nouveauPasse = await FlutterBcrypt.hashPw(
+          password: passeController.text,
+          salt: salt10,
+        );
+
+        utilisateur.passe = nouveauPasse;
+
+        utilisateursFirebase
+            .doc(utilisateur.id!)
+            .set(utilisateur.toMap())
+            .then((value) {
+          showAlertDialog(context);
+        });
+      }
+    }
   }
 }
 

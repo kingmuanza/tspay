@@ -32,6 +32,7 @@ class _ChampState extends State<Champ> {
   Widget build(BuildContext context) {
     return Form(
       key: widget.formKey,
+      autovalidateMode: AutovalidateMode.disabled,
       child: TextFormField(
         style: TextStyle(fontSize: 20, color: Colors.white),
         validator: (value) {

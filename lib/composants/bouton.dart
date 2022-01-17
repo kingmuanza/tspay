@@ -43,7 +43,7 @@ class _BoutonState extends State<Bouton> {
                   borderRadius: BorderRadius.circular(0.0),
                   side: BorderSide(
                     color: Colors.white,
-                    width: 2.0,
+                    width: 0.0,
                   ),
                 ),
               )
@@ -129,6 +129,75 @@ class _GrosBoutonState extends State<GrosBouton> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class PetitBouton extends StatefulWidget {
+  final double largeur;
+  final String nom;
+  final Function action;
+  bool? secondaire;
+  PetitBouton({
+    Key? key,
+    required this.largeur,
+    required this.nom,
+    required this.action,
+    bool? this.secondaire,
+  }) : super(key: key);
+
+  @override
+  _PetitBoutonState createState() => _PetitBoutonState();
+}
+
+class _PetitBoutonState extends State<PetitBouton> {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        widget.action();
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(
+          widget.secondaire != null
+              ? Color.fromRGBO(0, 0, 34, 1)
+              : Colors.white,
+        ),
+        minimumSize: MaterialStateProperty.all(
+          Size(
+            widget.largeur,
+            40,
+          ),
+        ),
+        shape: widget.secondaire != null
+            ? MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  side: BorderSide(
+                    color: Colors.white,
+                    width: 0.0,
+                  ),
+                ),
+              )
+            : MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  side: BorderSide(
+                    color: Color.fromRGBO(0, 0, 34, 1),
+                    width: 2.0,
+                  ),
+                ),
+              ),
+      ),
+      child: Text(
+        widget.nom.toUpperCase(),
+        style: TextStyle(
+          fontSize: 14,
+          color: widget.secondaire != null
+              ? Colors.white
+              : Color.fromRGBO(0, 0, 34, 1),
         ),
       ),
     );

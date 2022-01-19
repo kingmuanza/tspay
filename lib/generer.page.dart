@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/page.dart';
 
-class AccueilPage extends StatefulWidget {
-  const AccueilPage({Key? key}) : super(key: key);
+class GenererPage extends StatefulWidget {
+  const GenererPage({Key? key}) : super(key: key);
 
   @override
-  _AccueilPageState createState() => _AccueilPageState();
+  _GenererPageState createState() => _GenererPageState();
 }
 
-class _AccueilPageState extends State<AccueilPage> {
+class _GenererPageState extends State<GenererPage> {
   Widget contenu() {
     return Container(
       decoration: BoxDecoration(
@@ -16,7 +16,7 @@ class _AccueilPageState extends State<AccueilPage> {
       ),
       alignment: Alignment.center,
       child: Text(
-        "Accueil",
+        "Gérérer Code",
         style: TextStyle(
           color: Colors.white,
         ),
@@ -26,9 +26,6 @@ class _AccueilPageState extends State<AccueilPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaPage(
-      index: 0,
-      child: contenu(),
-    );
+    return MaPage(child: contenu(), index: 1);
   }
 }

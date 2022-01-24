@@ -9,7 +9,8 @@ import 'accueil.page.dart';
 class MaPage extends StatefulWidget {
   final Widget child;
   final int index;
-  const MaPage({Key? key, required this.child, required this.index})
+  bool? backable = true;
+  MaPage({Key? key, required this.child, required this.index, this.backable})
       : super(key: key);
 
   @override
@@ -20,11 +21,17 @@ class _MaPageState extends State<MaPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async => widget.backable != null ? widget.backable! : false,
       child: Scaffold(
+        backgroundColor: Color.fromRGBO(0, 0, 34, 1),
         body: Column(
           children: [
-            Expanded(child: widget.child),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(top: 24, left: 24, right: 24),
+                child: widget.child,
+              ),
+            ),
             Container(
               width: double.infinity,
               height: 80,

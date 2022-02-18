@@ -6,6 +6,7 @@ import 'package:tspay/password.page.dart';
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
 import 'models/utilisateur.model.dart';
+import 'services/utilisateur.service.dart';
 
 class InscriptionParticulierPage extends StatefulWidget {
   const InscriptionParticulierPage({Key? key}) : super(key: key);
@@ -17,9 +18,6 @@ class InscriptionParticulierPage extends StatefulWidget {
 
 class _InscriptionParticulierPageState
     extends State<InscriptionParticulierPage> {
-  final LocalStorage storage = new LocalStorage('tspay');
-  final utilisateursFirebase =
-      FirebaseFirestore.instance.collection('utilisateurs');
   final _parrainFormKey = GlobalKey<FormState>();
   final _numeroFormKey = GlobalKey<FormState>();
   final _datenaissFormKey = GlobalKey<FormState>();
@@ -40,16 +38,17 @@ class _InscriptionParticulierPageState
 
   bool checkedValue = false;
 
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().subtract(Duration(days: 365 * 18));
 
   bool showMessageConditionsUtilisation = false;
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1900, 8),
+      lastDate: DateTime.now().subtract(Duration(days: 365 * 18)),
+    );
     if (picked != null && picked != selectedDate)
       setState(() {
         datenaissController.text = picked.toIso8601String().split('T')[0];
@@ -65,7 +64,7 @@ class _InscriptionParticulierPageState
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 34, 1)),
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 50),
+        padding: EdgeInsets.only(left: 32, right: 32, top: 0),
         height: hauteur,
         child: SingleChildScrollView(
           child: Column(
@@ -74,7 +73,7 @@ class _InscriptionParticulierPageState
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                padding: const EdgeInsets.only(top: 50.0, bottom: 16),
                 child: EnteteGauche(),
               ),
               Champ(
@@ -172,7 +171,7 @@ class _InscriptionParticulierPageState
                     )
                   : Container(),
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding: const EdgeInsets.only(top: 16.0, bottom: 32),
                 child: Bouton(
                   nom: "S'inscrire",
                   largeur: largeur / 2,
@@ -209,15 +208,12 @@ class _InscriptionParticulierPageState
       utilisateur.idparrain = idparrain;
       utilisateur.datenaiss = selectedDate;
       print(utilisateur.toMap());
-
-      var resultat = await utilisateursFirebase.doc(utilisateur.id!).get();
-      var u = resultat.data();
-      print("utilisatuer trouvé : " + utilisateur.id!);
-      print(u);
-      if (u != null) {
-        showAlertDialog(context);
-      } else {
-        storage.setItem("utilisateur", utilisateur.toMap()).then((value) {
+      UtilisateurService utilisateurService = UtilisateurService();
+      utilisateurService.getFirebaseUtilisateur(utilisateur.id!).then((u) {
+        print("utilisatuer trouvé : " + utilisateur.id!);
+        print(u);
+      }).catchError((e) {
+        utilisateurService.setLocalUtilisateur(utilisateur).then((value) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -225,7 +221,7 @@ class _InscriptionParticulierPageState
             ),
           );
         });
-      }
+      });
     } else {
       if (!checkedValue) {
         showMessageConditionsUtilisation = true;

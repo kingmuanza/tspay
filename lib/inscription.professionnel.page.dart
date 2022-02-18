@@ -7,6 +7,7 @@ import 'package:tspay/password.page.dart';
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
 import 'models/utilisateur.model.dart';
+import 'services/utilisateur.service.dart';
 
 class InscriptionProfessionnelPage extends StatefulWidget {
   const InscriptionProfessionnelPage({Key? key}) : super(key: key);
@@ -41,16 +42,17 @@ class _InscriptionProfessionnelPageState
 
   bool checkedValue = false;
 
-  DateTime selectedDate = DateTime.now();
+  DateTime selectedDate = DateTime.now().subtract(Duration(days: 365 * 18));
 
   bool showMessageConditionsUtilisation = false;
 
   Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(1900, 8),
+      lastDate: DateTime.now().subtract(Duration(days: 365 * 18)),
+    );
     if (picked != null && picked != selectedDate)
       setState(() {
         datenaissController.text = picked.toIso8601String().split('T')[0];
@@ -66,7 +68,7 @@ class _InscriptionProfessionnelPageState
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 34, 1)),
-        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 50),
+        padding: EdgeInsets.only(left: 32, right: 32, top: 0),
         height: hauteur,
         child: SingleChildScrollView(
           child: Column(
@@ -75,7 +77,7 @@ class _InscriptionProfessionnelPageState
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                padding: const EdgeInsets.only(top: 50.0, bottom: 16),
                 child: EntetePro(),
               ),
               Champ(
@@ -170,7 +172,7 @@ class _InscriptionProfessionnelPageState
                     )
                   : Container(),
               Padding(
-                padding: const EdgeInsets.only(top: 16.0),
+                padding: const EdgeInsets.only(top: 16.0, bottom: 32),
                 child: Bouton(
                   nom: "S'inscrire",
                   largeur: largeur / 2,
@@ -206,14 +208,14 @@ class _InscriptionProfessionnelPageState
       utilisateur.tel = tel;
       utilisateur.commerce = commerce;
 
-      var resultat = await utilisateursFirebase.doc(utilisateur.id!).get();
-      var u = resultat.data();
-      print("utilisatuer trouvé");
-      print(u);
-      if (u != null) {
-        showAlertDialog(context);
-      } else {
-        storage.setItem("utilisateur", utilisateur.toMap()).then((value) {
+      print(utilisateur.toMap());
+      UtilisateurService utilisateurService = UtilisateurService();
+      utilisateurService.getFirebaseUtilisateur(utilisateur.id!).then((u) {
+        print("utilisatuer trouvé : " + utilisateur.id!);
+        print(u);
+      }).catchError((e) {
+        print(e);
+        utilisateurService.setLocalUtilisateur(utilisateur).then((value) {
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -221,7 +223,7 @@ class _InscriptionProfessionnelPageState
             ),
           );
         });
-      }
+      });
     } else {
       if (!checkedValue) {
         showMessageConditionsUtilisation = true;

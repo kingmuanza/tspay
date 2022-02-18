@@ -53,8 +53,14 @@ class UtilisateurService {
     }
   }
 
+  Future<Utilisateur?> setLocalUtilisateur(Utilisateur utilisateur) async {
+    await storage.setItem('utilisateur', utilisateur.toMap());
+  }
+
   Future<Utilisateur> getFirebaseUtilisateur(String id) async {
-    var resultat = await utilisateursFirebase.doc('237' + id).get();
+    print("id");
+    print(id);
+    var resultat = await utilisateursFirebase.doc(id).get();
     var u = resultat.data();
     if (u != null) {
       Utilisateur utilisateur = Utilisateur.fromMap(u);

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/composants/bouton.dart';
 import 'package:tspay/connexion.page.dart';
+import 'package:tspay/generer.page.dart';
 import 'package:tspay/models/utilisateur.model.dart';
 import 'package:tspay/page.dart';
+import 'package:tspay/pay.page.dart';
 import 'package:tspay/services/utilisateur.service.dart';
 import 'package:intl/intl.dart';
+
+import 'historique.transactions.page.dart';
 
 class AccueilPage extends StatefulWidget {
   const AccueilPage({Key? key}) : super(key: key);
@@ -15,7 +19,7 @@ class AccueilPage extends StatefulWidget {
 
 class _AccueilPageState extends State<AccueilPage> {
   UtilisateurService utilisateurService = UtilisateurService();
-  Utilisateur utilisateur = Utilisateur("");
+  Utilisateur? utilisateur = Utilisateur("");
   final formatCurrency = new NumberFormat.decimalPattern("fr_FR");
 
   @override
@@ -38,10 +42,10 @@ class _AccueilPageState extends State<AccueilPage> {
           Container(
             width: double.infinity,
             child: Text(
-              (utilisateur.noms != null ? utilisateur.noms! : "Aucun") +
+              (utilisateur!.noms != null ? utilisateur!.noms! : "Aucun") +
                   " " +
-                  (utilisateur.prenoms != null
-                      ? utilisateur.prenoms!
+                  (utilisateur!.prenoms != null
+                      ? utilisateur!.prenoms!
                       : "utilisateur"),
               textAlign: TextAlign.left,
               style: TextStyle(
@@ -53,9 +57,11 @@ class _AccueilPageState extends State<AccueilPage> {
           Container(
             width: double.infinity,
             child: Text(
-              "Particulier",
+              utilisateur!.commerce != null
+                  ? utilisateur!.commerce!
+                  : "Particulier",
               style: TextStyle(
-                color: Colors.white,
+                color: Colors.white70,
                 fontSize: 14,
               ),
             ),
@@ -97,7 +103,7 @@ class _AccueilPageState extends State<AccueilPage> {
       children: [
         Expanded(
           child: Container(
-            child: Box("Solde", 1250000, "XAF"),
+            child: Box("Solde", 0, "XAF"),
           ),
         ),
         Container(
@@ -111,7 +117,7 @@ class _AccueilPageState extends State<AccueilPage> {
 
   Widget troisiemeLigne() {
     return Container(
-      child: Box("Montant total des paiements", 12250000, "XAF"),
+      child: Box("Montant total des paiements du jour", 0, "XAF"),
     );
   }
 
@@ -136,34 +142,54 @@ class _AccueilPageState extends State<AccueilPage> {
           Expanded(
             child: Container(
               margin: EdgeInsets.only(right: 5),
-              child: GrosBox(
-                  "Générer un code de paiement",
-                  Text(
-                    "+",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w900,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GenererPage(),
                     ),
-                  )),
+                  );
+                },
+                child: GrosBox(
+                    "Générer un code de paiement",
+                    Text(
+                      "+",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    )),
+              ),
             ),
           ),
           Expanded(
             child: Container(
               margin: EdgeInsets.only(left: 5),
-              child: GrosBox(
-                  "Effectuer un paiement",
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      "PAY",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.w900,
-                      ),
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PayPage(),
                     ),
-                  )),
+                  );
+                },
+                child: GrosBox(
+                    "Effectuer un paiement",
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        "PAY",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    )),
+              ),
             ),
           ),
         ],
@@ -172,31 +198,42 @@ class _AccueilPageState extends State<AccueilPage> {
   }
 
   Widget sixiemeLigne() {
-    return Container(
-      margin: EdgeInsets.only(top: 16),
-      width: double.infinity,
-      child: Text(
-        "Historique des transactions",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
+    return InkWell(
+      onTap: () {
+        print("Historique des transactions");
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HistoriqueTransactionsPage(),
+          ),
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(top: 16),
+        width: double.infinity,
+        child: Text(
+          "Dernière transaction",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
         ),
       ),
     );
   }
 
-  Widget Box(String libelle, int montant, [String? unite]) {
+  Widget Box(String libelle, int montant, [String? unite, double? opacite]) {
     return Container(
       margin: EdgeInsets.only(top: 10),
-      height: 100,
+      height: 72,
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 255, 255, 0.2),
+        color: Color.fromRGBO(255, 255, 255, opacite != null ? opacite : 0.2),
       ),
       child: Column(
         children: [
           Container(
             margin: EdgeInsets.only(
-              top: 10,
+              top: 8,
               left: 16,
               right: 16,
             ),
@@ -209,7 +246,7 @@ class _AccueilPageState extends State<AccueilPage> {
           ),
           Container(
               margin: EdgeInsets.only(
-                top: 10,
+                top: 4,
                 left: 16,
                 right: 16,
               ),
@@ -223,9 +260,13 @@ class _AccueilPageState extends State<AccueilPage> {
   Widget PetitBox(String libelle, int montant, [String? unite]) {
     return Container(
       margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.only(
+        left: 16,
+        top: 8,
+        bottom: 8,
+      ),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 255, 255, 0.2),
+        color: Color.fromRGBO(255, 255, 255, 0.1),
       ),
       child: Column(
         children: [
@@ -234,14 +275,21 @@ class _AccueilPageState extends State<AccueilPage> {
             child: Text(
               libelle,
               textAlign: unite != null ? TextAlign.left : TextAlign.right,
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white70),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 8),
+            margin: EdgeInsets.only(top: 0),
             width: double.infinity,
             child: setLibelle(montant, unite),
           ),
+          Container(
+            width: double.infinity,
+            child: Text(
+              "Wax Vestimentaire",
+              style: TextStyle(color: Colors.white),
+            ),
+          )
         ],
       ),
     );
@@ -252,7 +300,7 @@ class _AccueilPageState extends State<AccueilPage> {
       margin: EdgeInsets.only(top: 10),
       height: 150,
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 255, 255, 0.2),
+        color: Color.fromRGBO(255, 255, 255, 0.05),
       ),
       child: Column(
         children: [
@@ -288,12 +336,12 @@ class _AccueilPageState extends State<AccueilPage> {
   }
 
   Widget spetiemeLigne() {
-    List<int> text = [1, 2, 3, 4];
+    List<int> text = [1];
     return Column(
       children: [
         for (var i in text)
           Container(
-            child: PetitBox("Dépôt : 2021/11/02 à 14:05", 750000, "XAF"),
+            child: PetitBox("Dépôt : 2021/11/02 à 14:05", 0, "XAF"),
           ),
       ],
     );
@@ -315,7 +363,7 @@ class _AccueilPageState extends State<AccueilPage> {
           ),
           unite != null
               ? TextSpan(
-                  text: " " + unite!,
+                  text: " " + unite,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 28,
@@ -342,8 +390,8 @@ class _AccueilPageState extends State<AccueilPage> {
               premiereLigne(),
               deuxiemeLigne(),
               troisiemeLigne(),
-              quatriemeLigne(),
-              cinquiemeLigne(),
+              // quatriemeLigne(),
+              // cinquiemeLigne(),
               sixiemeLigne(),
               spetiemeLigne(),
             ],

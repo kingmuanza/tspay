@@ -34,7 +34,7 @@ class _BoutonState extends State<Bouton> {
         minimumSize: MaterialStateProperty.all(
           Size(
             widget.largeur,
-            50,
+            45,
           ),
         ),
         shape: widget.secondaire != null
@@ -52,7 +52,7 @@ class _BoutonState extends State<Bouton> {
                   borderRadius: BorderRadius.circular(0.0),
                   side: BorderSide(
                     color: Colors.white,
-                    width: 0.0,
+                    width: 1.0,
                   ),
                 ),
               ),
@@ -60,7 +60,7 @@ class _BoutonState extends State<Bouton> {
       child: Text(
         widget.nom.toUpperCase(),
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 16,
         ),
       ),
     );

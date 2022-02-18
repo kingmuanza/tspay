@@ -6,9 +6,11 @@ import 'composants/bouton.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'models/paiement.model.dart';
+
 class GenererQRCodePage extends StatefulWidget {
-  final int montant;
-  const GenererQRCodePage({Key? key, required this.montant}) : super(key: key);
+  final Paiement paiement;
+  const GenererQRCodePage({Key? key, required this.paiement}) : super(key: key);
 
   @override
   _GenererQRCodePageState createState() => _GenererQRCodePageState();
@@ -17,6 +19,7 @@ class GenererQRCodePage extends StatefulWidget {
 class _GenererQRCodePageState extends State<GenererQRCodePage> {
   final formatCurrency = new NumberFormat.decimalPattern("fr_FR");
   String libelle = "Veuillez patienter pendant la génération de votre QR Code ";
+  bool codeGenere = false;
   Widget contenu() {
     double largeur = MediaQuery.of(context).size.width;
     double hauteur = MediaQuery.of(context).size.height;
@@ -28,10 +31,15 @@ class _GenererQRCodePageState extends State<GenererQRCodePage> {
       child: Column(
         children: [
           Container(
-            margin: EdgeInsets.only(top: 32),
+            margin: EdgeInsets.only(
+              top: 32,
+              left: 0,
+            ),
             width: double.infinity,
             child: Text(
-              "Paiement de " + formatCurrency.format(widget.montant) + " XAF",
+              "Paiement de " +
+                  formatCurrency.format(widget.paiement.montant) +
+                  " XAF",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -39,7 +47,10 @@ class _GenererQRCodePageState extends State<GenererQRCodePage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 8),
+            margin: EdgeInsets.only(
+              top: 8,
+              left: 0,
+            ),
             width: double.infinity,
             child: Text(
               libelle,
@@ -50,23 +61,28 @@ class _GenererQRCodePageState extends State<GenererQRCodePage> {
               ),
             ),
           ),
-          Container(
-            margin: EdgeInsets.only(top: 32),
-            width: largeur,
-            child: QrImage(
-              data: "{montant : " + formatCurrency.format(widget.montant) + "}",
-              version: QrVersions.auto,
-              size: largeur,
-              foregroundColor: Colors.white,
-            ),
-          ),
+          codeGenere
+              ? Container(
+                  color: Colors.white,
+                  margin: EdgeInsets.only(top: 32),
+                  padding: EdgeInsets.only(top: 32),
+                  width: largeur,
+                  child: QrImage(
+                    data: genererData(),
+                    version: QrVersions.auto,
+                    size: largeur,
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                  ),
+                )
+              : Container(),
           TextButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => PaiementEffectuePage(
-                    montant: widget.montant,
+                    paiement: widget.paiement,
                   ),
                 ),
               );
@@ -78,10 +94,18 @@ class _GenererQRCodePageState extends State<GenererQRCodePage> {
     );
   }
 
+  String genererData() {
+    String data = widget.paiement.toMap().toString();
+    print("genererData");
+    print(data);
+    return widget.paiement.id!;
+  }
+
   @override
   void initState() {
     Future.delayed(const Duration(milliseconds: 1500), () {
       libelle = "Votre code est prêt à être scanné";
+      codeGenere = true;
       setState(() {});
     });
   }

@@ -56,7 +56,7 @@ class _ChampState extends State<Champ> {
           suffixIcon: widget.iconeBouton,
           labelText: widget.labelText,
           labelStyle: TextStyle(
-            fontSize: 20.0,
+            fontSize: 18.0,
             color: Colors.white70,
           ),
           enabledBorder: UnderlineInputBorder(

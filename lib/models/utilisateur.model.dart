@@ -20,6 +20,7 @@ class Utilisateur {
   String? passe;
   String? idparrain;
   int statut = 0;
+  bool? professionnel;
 
   Utilisateur(String tel, [int? stat]) {
     this.id = '237' + this.contactToIdentifiant(tel);
@@ -45,6 +46,7 @@ class Utilisateur {
       'prenoms': prenoms,
       'datenaiss': datenaiss != null ? datenaiss!.toIso8601String() : null,
       'profession': profession,
+      'professionnel': professionnel,
       'pays': pays,
       'tel': tel,
       'email': email,
@@ -79,6 +81,9 @@ class Utilisateur {
       }
       if (map['profession'] != null) {
         u.profession = map['profession'];
+      }
+      if (map['professionnel'] != null) {
+        u.professionnel = map['professionnel'];
       }
       if (map['pays'] != null) {
         u.pays = map['pays'];

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/compte.page.dart';
 import 'package:tspay/generer.page.dart';
+import 'package:tspay/models/utilisateur.model.dart';
 import 'package:tspay/pay.page.dart';
 import 'package:tspay/porte.monnaie.page.dart';
+import 'package:tspay/services/utilisateur.service.dart';
 
 import 'accueil.page.dart';
 
@@ -18,6 +20,22 @@ class MaPage extends StatefulWidget {
 }
 
 class _MaPageState extends State<MaPage> {
+  UtilisateurService utilisateurService = UtilisateurService();
+  Utilisateur? utilisateur = Utilisateur("");
+
+  @override
+  initState() {
+    super.initState();
+    this.init();
+  }
+
+  init() async {
+    utilisateur = await utilisateurService.getLocalUtilisateur();
+    print("utilisateur!.commerce");
+    print(utilisateur!.commerce);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -48,13 +66,20 @@ class _MaPageState extends State<MaPage> {
                     actif: widget.index == 0,
                     page: AccueilPage(),
                   ),
-                  TsTab(
-                    icone: Icons.add,
-                    caractere: "+",
-                    nom: "Générer",
-                    actif: widget.index == 1,
-                    page: GenererPage(),
-                  ),
+                  utilisateur!.commerce != null
+                      ? TsTab(
+                          icone: Icons.qr_code,
+                          caractere: 'PAY',
+                          nom: "Générer",
+                          actif: widget.index == 1,
+                          page: PayPage(),
+                        )
+                      : TsTab(
+                          icone: Icons.qr_code,
+                          nom: "Générer",
+                          actif: widget.index == 1,
+                          page: GenererPage(),
+                        ),
                   Container(
                     width: 100,
                     height: 100,
@@ -93,6 +118,20 @@ class BoutonMilieu extends StatefulWidget {
 }
 
 class _BoutonMilieuState extends State<BoutonMilieu> {
+  UtilisateurService utilisateurService = UtilisateurService();
+  Utilisateur? utilisateur = Utilisateur("");
+
+  @override
+  initState() {
+    super.initState();
+    this.init();
+  }
+
+  init() async {
+    utilisateur = await utilisateurService.getLocalUtilisateur();
+    setState(() {});
+  }
+
   Route _createRoute(Widget page) {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -108,7 +147,8 @@ class _BoutonMilieuState extends State<BoutonMilieu> {
       onTap: () {
         Navigator.push(
           context,
-          _createRoute(PayPage()),
+          _createRoute(
+              utilisateur!.commerce != null ? GenererPage() : PayPage()),
         );
       },
       child: Container(
@@ -129,14 +169,27 @@ class _BoutonMilieuState extends State<BoutonMilieu> {
             shape: BoxShape.circle,
           ),
           child: Center(
-              child: Text(
-            "PAY",
-            style: TextStyle(
-              color: widget.actif ? Colors.white : Color.fromRGBO(0, 0, 34, 1),
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-            ),
-          )),
+            child: utilisateur?.commerce == null
+                ? Text(
+                    "PAY",
+                    style: TextStyle(
+                      color: widget.actif
+                          ? Colors.white
+                          : Color.fromRGBO(0, 0, 34, 1),
+                      fontSize: 30,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  )
+                : Container(
+                    child: Icon(
+                      Icons.qr_code,
+                      size: 40,
+                      color: widget.actif
+                          ? Colors.white
+                          : Color.fromRGBO(0, 0, 34, 1),
+                    ),
+                  ),
+          ),
         ),
       ),
     );
@@ -177,6 +230,9 @@ class _TsTabState extends State<TsTab> {
   Widget build(BuildContext context) {
     double largeur = MediaQuery.of(context).size.width;
     double hauteur = MediaQuery.of(context).size.height;
+
+    int longueur = 1;
+    longueur = widget.caractere != null ? widget.caractere!.length : 0;
     return InkWell(
       onTap: () {
         print("on tap");
@@ -190,7 +246,7 @@ class _TsTabState extends State<TsTab> {
       },
       child: Container(
         width: (largeur - 100) / 4,
-        padding: EdgeInsets.only(top: 20),
+        padding: EdgeInsets.only(top: longueur > 1 ? 24 : 20),
         child: Column(
           children: [
             widget.caractere != null
@@ -198,7 +254,7 @@ class _TsTabState extends State<TsTab> {
                     widget.caractere!,
                     style: TextStyle(
                       color: widget.actif ? Colors.grey.shade500 : Colors.white,
-                      fontSize: 35,
+                      fontSize: longueur > 1 ? 29 : 35,
                       fontWeight: FontWeight.w900,
                       height: 0.88,
                     ),

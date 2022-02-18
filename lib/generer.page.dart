@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:tspay/composants/bouton.dart';
 import 'package:tspay/composants/champ.dart';
 import 'package:tspay/generer.qrcode.page.dart';
+import 'package:tspay/models/paiement.model.dart';
 import 'package:tspay/page.dart';
+import 'package:tspay/services/qrcode.service.dart';
+import 'package:tspay/services/utilisateur.service.dart';
+
+import 'models/utilisateur.model.dart';
 
 class GenererPage extends StatefulWidget {
   const GenererPage({Key? key}) : super(key: key);
@@ -49,20 +54,43 @@ class _GenererPageState extends State<GenererPage> {
               largeur: 120,
               nom: "Continuer",
               action: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => GenererQRCodePage(
-                      montant: int.parse(montantController.text),
+                this
+                    .genererPaiement(int.parse(montantController.text))
+                    .then((paiement) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GenererQRCodePage(
+                        paiement: paiement,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                });
               },
             ),
           ),
         ],
       ),
     );
+  }
+
+  Future<Paiement> genererPaiement(int montant) async {
+    UtilisateurService utilisateurService = UtilisateurService();
+    Utilisateur? utilisateur = await utilisateurService.getLocalUtilisateur();
+    Paiement paiement = Paiement(montant);
+    if (utilisateur != null) {
+      paiement.idutilisateur = utilisateur.id;
+      paiement.nom = (utilisateur.noms != null ? utilisateur.noms! : "") +
+          " " +
+          (utilisateur.prenoms != null ? utilisateur.prenoms! : "");
+
+      paiement.numero = utilisateur.id;
+    }
+    print("paiement");
+    print(paiement.toMap());
+    QRCodeService qRCodeService = QRCodeService();
+    await qRCodeService.creer(paiement);
+    return paiement;
   }
 
   @override

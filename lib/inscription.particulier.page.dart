@@ -28,9 +28,9 @@ class _InscriptionParticulierPageState
   final _prenomFormKey = GlobalKey<FormState>();
   TextEditingController indicatifController =
       TextEditingController(text: '+237');
-  TextEditingController parrainController = TextEditingController(text: '');
   TextEditingController numeroController =
       TextEditingController(text: '6 96 54 34 95');
+  TextEditingController parrainController = TextEditingController(text: '');
   TextEditingController datenaissController = TextEditingController(text: '');
   TextEditingController nomController = TextEditingController(text: 'Muanza');
   TextEditingController prenomController =

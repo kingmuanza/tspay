@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/composants/bouton.dart';
+import 'package:tspay/models/paiement.model.dart';
 import 'package:tspay/page.dart';
 import 'package:intl/intl.dart';
 
 import 'accueil.page.dart';
+import 'historique.transactions.page.dart';
 
 class PaiementEffectuePage extends StatefulWidget {
-  final int montant;
-  const PaiementEffectuePage({Key? key, required this.montant})
-      : super(key: key);
+  final Paiement paiement;
+  bool? entrant = true;
+  PaiementEffectuePage({
+    Key? key,
+    required this.paiement,
+    this.entrant,
+  }) : super(key: key);
 
   @override
   _PaiementEffectuePageState createState() => _PaiementEffectuePageState();
@@ -20,6 +26,10 @@ class _PaiementEffectuePageState extends State<PaiementEffectuePage> {
       "Paiement effectué. Vous allez recevoir le montant sur votre Mobile Money ";
 
   Widget contenu() {
+    bool entrant = widget.entrant != null ? widget.entrant! : true;
+    String libelle = entrant
+        ? "Paiement effectué. Vous allez recevoir le montant sur votre Mobile Money "
+        : "Paiement effectué. Le montant a été retiré de votre Mobile Money ";
     double largeur = MediaQuery.of(context).size.width;
     double hauteur = MediaQuery.of(context).size.height;
     return Container(
@@ -33,7 +43,9 @@ class _PaiementEffectuePageState extends State<PaiementEffectuePage> {
             margin: EdgeInsets.only(top: 32),
             width: double.infinity,
             child: Text(
-              "Paiement de " + formatCurrency.format(widget.montant) + " XAF",
+              "Paiement de " +
+                  formatCurrency.format(widget.paiement.montant) +
+                  " XAF",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -73,22 +85,39 @@ class _PaiementEffectuePageState extends State<PaiementEffectuePage> {
               ),
             ),
           ),
-          Container(
-            width: double.infinity,
-            alignment: Alignment.topLeft,
-            child: Bouton(
-              largeur: 150,
-              nom: "Revenir à l'accueil",
-              action: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AccueilPage(),
+          entrant
+              ? Container(
+                  width: double.infinity,
+                  alignment: Alignment.topLeft,
+                  child: Bouton(
+                    largeur: 150,
+                    nom: "Revenir à l'accueil",
+                    action: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AccueilPage(),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          )
+                )
+              : Container(
+                  width: double.infinity,
+                  alignment: Alignment.topLeft,
+                  child: Bouton(
+                    largeur: 150,
+                    nom: "Historique des transactions",
+                    action: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HistoriqueTransactionsPage(),
+                        ),
+                      );
+                    },
+                  ),
+                )
         ],
       ),
     );

@@ -44,7 +44,7 @@ class UtilisateurService {
     }
   }
 
-  getLocalUtilisateur() async {
+  Future<Utilisateur?> getLocalUtilisateur() async {
     Map<String, dynamic> utilisateurMap = await storage.getItem('utilisateur');
     if (utilisateurMap != null) {
       return Utilisateur.fromMap(utilisateurMap);

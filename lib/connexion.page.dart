@@ -9,8 +9,8 @@ import 'package:tspay/inscription.choix.page.dart';
 import 'package:tspay/services/utilisateur.service.dart';
 
 import 'composants/bouton.dart';
+import 'composants/typographie.dart';
 import 'exceptions/auth.exception.dart';
-import 'inscription.particulier.page.dart';
 import 'models/utilisateur.model.dart';
 
 class ConnexionPage extends StatefulWidget {
@@ -22,90 +22,166 @@ class ConnexionPage extends StatefulWidget {
 }
 
 class _ConnexionPageState extends State<ConnexionPage> {
-  final LocalStorage storage = new LocalStorage('tspay');
-  final utilisateursFirebase =
-      FirebaseFirestore.instance.collection('utilisateurs');
   final _passeFormKey = GlobalKey<FormState>();
   final _numeroFormKey = GlobalKey<FormState>();
   TextEditingController numeroController =
       TextEditingController(text: '696543495');
   TextEditingController passeController = TextEditingController(text: 'Muanza');
+  TextEditingController indicatifController =
+      TextEditingController(text: '+237');
+
+  Widget formulaire() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            children: [
+              Container(
+                width: 80,
+                padding: EdgeInsets.only(right: 10),
+                child: Champ(
+                  labelText: 'Indicatif',
+                  controller: indicatifController,
+                  readOnly: true,
+                ),
+              ),
+              Expanded(
+                child: Champ(
+                  labelText: "Numéro de téléphone",
+                  controller: numeroController,
+                  clavier: TextInputType.phone,
+                  key: _numeroFormKey,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 24),
+          child: Champ(
+            labelText: "Mot de passe",
+            controller: passeController,
+            key: _passeFormKey,
+            isPassword: true,
+          ),
+        ),
+        passeOublie(),
+        Container(
+          alignment: Alignment.topLeft,
+          child: Bouton(
+            largeur: 200,
+            nom: "Se connecter",
+            action: () {
+              getUtilisateur();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget passeOublie() {
+    return Container(
+      margin: EdgeInsets.only(top: 0, bottom: 24),
+      alignment: Alignment.topLeft,
+      width: double.infinity,
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+                text: "Mot de passe oublié ",
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.white70,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    print('Inscrivez-vous ici');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InscriptionChoixPage(),
+                      ),
+                    );
+                  }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget inscription() {
+    return Container(
+      margin: EdgeInsets.only(top: 32),
+      alignment: Alignment.topLeft,
+      width: double.infinity,
+      child: RichText(
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: "Vous ne disposez pas de compte ? ",
+            ),
+            TextSpan(
+                text: " Inscrivez-vous ici",
+                style: TextStyle(
+                  // decoration: TextDecoration.underline,
+                  color: Colors.blue,
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    print('Inscrivez-vous ici');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InscriptionChoixPage(),
+                      ),
+                    );
+                  }),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget contenu() {
+    double hauteur = MediaQuery.of(context).size.height;
+    return Container(
+      decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 34, 1)),
+      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 60),
+      height: hauteur,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Typographie.titre('Connexion'),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Typographie.logo(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: Typographie.sousTitre(
+                "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor ed gravida nunc."),
+          ),
+          formulaire(),
+          inscription()
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    double largeur = MediaQuery.of(context).size.width;
-    double hauteur = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async => widget.backable != null ? widget.backable! : true,
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(0, 0, 34, 1)),
-            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 60),
-            // height: hauteur,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Entete(),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Champ(
-                    labelText: "Numéro de téléphone",
-                    controller: numeroController,
-                    clavier: TextInputType.phone,
-                    key: _numeroFormKey,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0, bottom: 32),
-                  child: Champ(
-                    labelText: "Mot de passe",
-                    controller: passeController,
-                    key: _passeFormKey,
-                    isPassword: true,
-                  ),
-                ),
-                Bouton(
-                  largeur: 200,
-                  nom: "Se connecter",
-                  action: () {
-                    getUtilisateur();
-                  },
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 32),
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "Vous ne disposez pas de compte ? ",
-                        ),
-                        TextSpan(
-                            text: " Inscrivez-vous ici",
-                            style: TextStyle(
-                              // decoration: TextDecoration.underline,
-                              color: Colors.blue,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                print('Inscrivez-vous ici');
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        InscriptionChoixPage(),
-                                  ),
-                                );
-                              }),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          child: contenu(),
         ), // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
@@ -139,51 +215,5 @@ class _ConnexionPageState extends State<ConnexionPage> {
       print(e);
       throw AuthException("Login ou mot de passe incorrect");
     }
-  }
-}
-
-class Entete extends StatelessWidget {
-  const Entete({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          child: Text(
-            "Connexion",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-            ),
-          ),
-        ),
-        Container(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Container(
-              alignment: Alignment.centerLeft,
-              width: double.infinity,
-              child: Image(
-                image: AssetImage('assets/images/logo.png'),
-                height: 150,
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: Text(
-            "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor ed gravida nunc.",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/composants/bouton.dart';
+import 'package:tspay/composants/typographie.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/porte.monnaie.code.page.dart';
+import 'package:tspay/services/qrcode.service.dart';
 
 import 'composants/champ.dart';
 
@@ -19,6 +21,8 @@ class _PorteMonnaiePageAjoutState extends State<PorteMonnaiePageAjout> {
   TextEditingController numeroController =
       TextEditingController(text: '6 76 54 34 95');
 
+  String operateur = "";
+
   Widget contenu() {
     return Container(
       decoration: BoxDecoration(
@@ -29,24 +33,13 @@ class _PorteMonnaiePageAjoutState extends State<PorteMonnaiePageAjout> {
         children: [
           Container(
             margin: EdgeInsets.only(top: 16),
-            child: Text(
-              "Ajouter un porte-monnaie électronique",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-              ),
-            ),
+            child:
+                Typographie.appTitre("Ajouter un porte-monnaie électronique"),
           ),
           Container(
-            margin: EdgeInsets.only(top: 16, bottom: 16),
-            child: Text(
-              "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Suspendisse potenti. Morbi vel nulla tortor",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w100,
-              ),
-            ),
+            margin: EdgeInsets.only(top: 8, bottom: 16),
+            child: Typographie.appSousTitre(
+                "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Suspendisse potenti. Morbi vel nulla tortor"),
           ),
           Row(
             children: [
@@ -65,6 +58,30 @@ class _PorteMonnaiePageAjoutState extends State<PorteMonnaiePageAjout> {
                   formKey: _numeroFormKey,
                   controller: numeroController,
                   clavier: TextInputType.phone,
+                  validator: (value) {
+                    String numero = value
+                        .toString()
+                        .split(' ')
+                        .join('')
+                        .split('-')
+                        .join('');
+                    if (numero.length != 9) {
+                      return "Numéro de téléphone invalide";
+                    }
+                  },
+                  onChanged: (value) {
+                    QRCodeService qrCodeService = QRCodeService();
+                    String numero = value
+                        .toString()
+                        .split(' ')
+                        .join('')
+                        .split('-')
+                        .join('');
+                    if (numero.length > 3) {
+                      operateur = qrCodeService.detecterOperateurMobile(numero);
+                      setState(() {});
+                    }
+                  },
                 ),
               ),
             ],
@@ -73,7 +90,7 @@ class _PorteMonnaiePageAjoutState extends State<PorteMonnaiePageAjout> {
             width: double.infinity,
             margin: EdgeInsets.symmetric(vertical: 24),
             child: Text(
-              "MTN Cameroun",
+              operateur,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,

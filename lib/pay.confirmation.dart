@@ -118,16 +118,25 @@ class _PayConfirmationPageState extends State<PayConfirmationPage> {
   }
 
   Future payer(Paiement paiement) async {
-    paiement.idpayeur = utilisateur!.id;
-    if (utilisateur!.commerce != null) {
-      paiement.nompayeur = utilisateur!.commerce;
+    if (paiement.idutilisateur == utilisateur!.id!) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Vous ne pouvez pas effectuer un paiement sur votre propre compte"),
+        ),
+      );
     } else {
-      paiement.nompayeur = utilisateur!.noms! + " " + utilisateur!.prenoms!;
+      paiement.idpayeur = utilisateur!.id;
+      if (utilisateur!.commerce != null) {
+        paiement.nompayeur = utilisateur!.commerce;
+      } else {
+        paiement.nompayeur = utilisateur!.noms! + " " + utilisateur!.prenoms!;
+      }
+      paiement.datePaiement = DateTime.now();
+      paiement.statut = 1;
+      QRCodeService qRCodeService = new QRCodeService();
+      await qRCodeService.save(paiement);
     }
-    paiement.datePaiement = DateTime.now();
-    paiement.statut = 1;
-    QRCodeService qRCodeService = new QRCodeService();
-    await qRCodeService.save(paiement);
   }
 
   @override

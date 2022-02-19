@@ -5,10 +5,12 @@ import 'package:tspay/generer.page.dart';
 import 'package:tspay/models/utilisateur.model.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/pay.page.dart';
+import 'package:tspay/services/qrcode.service.dart';
 import 'package:tspay/services/utilisateur.service.dart';
 import 'package:intl/intl.dart';
 
 import 'historique.transactions.page.dart';
+import 'models/paiement.model.dart';
 
 class AccueilPage extends StatefulWidget {
   const AccueilPage({Key? key}) : super(key: key);
@@ -21,6 +23,11 @@ class _AccueilPageState extends State<AccueilPage> {
   UtilisateurService utilisateurService = UtilisateurService();
   Utilisateur? utilisateur = Utilisateur("");
   final formatCurrency = new NumberFormat.decimalPattern("fr_FR");
+  List<Paiement> paiements = [];
+  List<Paiement> paiementsR = [];
+  List<Paiement> paiementsE = [];
+
+  int solde = 0;
 
   @override
   initState() {
@@ -29,8 +36,36 @@ class _AccueilPageState extends State<AccueilPage> {
   }
 
   init() async {
+    print("historique init");
     utilisateur = await utilisateurService.getLocalUtilisateur();
-    setState(() {});
+    if (utilisateur != null) {
+      print("historique utilisateur init");
+      if (utilisateur!.id != null) {
+        print("historique utilisateur id init");
+        QRCodeService qrCodeService = QRCodeService();
+        qrCodeService.paiementsEmis(utilisateur!.id!).then((all) {
+          this.paiementsE = all;
+
+          qrCodeService.paiementsRecus(utilisateur!.id!).then((all2) {
+            this.paiementsR = all2;
+            solde = totalPaiements(paiementsR) - totalPaiements(paiementsE);
+
+            qrCodeService.historique(utilisateur!.id!).then((all3) {
+              this.paiements = all3.sublist(0, 2);
+              setState(() {});
+            });
+          });
+        });
+      }
+    }
+  }
+
+  int totalPaiements(List<Paiement> all) {
+    int total = 0;
+    all.forEach((element) {
+      total += element.montant;
+    });
+    return total;
   }
 
   Widget infosPersonnelles() {
@@ -103,7 +138,7 @@ class _AccueilPageState extends State<AccueilPage> {
       children: [
         Expanded(
           child: Container(
-            child: Box("Solde", 0, "XAF"),
+            child: Box("Solde", solde, "XAF"),
           ),
         ),
         Container(
@@ -210,17 +245,19 @@ class _AccueilPageState extends State<AccueilPage> {
           ),
         );
       },
-      child: Container(
-        margin: EdgeInsets.only(top: 16),
-        width: double.infinity,
-        child: Text(
-          "Dernière transaction",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
-        ),
-      ),
+      child: paiements.length > 0
+          ? Container(
+              margin: EdgeInsets.only(top: 16),
+              width: double.infinity,
+              child: Text(
+                "Dernières transactions",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                ),
+              ),
+            )
+          : Container(),
     );
   }
 
@@ -259,7 +296,17 @@ class _AccueilPageState extends State<AccueilPage> {
     );
   }
 
-  Widget PetitBox(String libelle, int montant, [String? unite]) {
+  Widget PetitBox(Paiement paiement) {
+    String nomRecepteur = "";
+    if (paiement.idutilisateur == utilisateur!.id) {
+      if (paiement.nompayeur != null) {
+        nomRecepteur = paiement.nompayeur!;
+      } else {
+        nomRecepteur = "Payeur non identifié";
+      }
+    } else {
+      nomRecepteur = paiement.nom!;
+    }
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.only(
@@ -268,30 +315,112 @@ class _AccueilPageState extends State<AccueilPage> {
         bottom: 8,
       ),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 255, 255, 0.1),
+        color: Color.fromRGBO(255, 255, 255, 0.075),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Container(
-            width: double.infinity,
-            child: Text(
-              libelle,
-              textAlign: unite != null ? TextAlign.left : TextAlign.right,
-              style: TextStyle(color: Colors.white70),
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  child: Text(
+                    libelle(paiement),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 0),
+                  width: double.infinity,
+                  child: setLibelle(paiement.montant, "XAF"),
+                ),
+                Container(
+                  width: double.infinity,
+                  child: Text(
+                    nomRecepteur,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 0),
-            width: double.infinity,
-            child: setLibelle(montant, unite),
-          ),
-          Container(
-            width: double.infinity,
-            child: Text(
-              "Wax Vestimentaire",
-              style: TextStyle(color: Colors.white),
+            width: 50,
+            child: Icon(
+              paiement.idutilisateur == utilisateur!.id
+                  ? Icons.arrow_downward
+                  : Icons.arrow_upward,
+              color: Colors.white54,
+              size: 30,
             ),
           )
+        ],
+      ),
+    );
+  }
+
+  String libelle(Paiement paiement) {
+    print("paiement.idutilisateur");
+    print(paiement.idutilisateur);
+    print("utilisateur!.id");
+    print(utilisateur!.id);
+    print(paiement.idutilisateur == utilisateur!.id);
+    String phrase = "";
+    String jour = "";
+    String heure = "";
+    if (paiement.datePaiement != null) {
+      jour = paiement.datePaiement!.toIso8601String().split('T')[0];
+      heure =
+          paiement.datePaiement!.toIso8601String().split('T')[1].split(".")[0];
+    } else {
+      jour = paiement.dateGeneration!.toIso8601String().split('T')[0];
+      heure = paiement.dateGeneration!
+          .toIso8601String()
+          .split('T')[1]
+          .split(".")[0];
+    }
+
+    if (paiement.idutilisateur == utilisateur!.id) {
+      phrase = "Reçu le ";
+    } else {
+      phrase = "Payé le ";
+    }
+    phrase = phrase + jour + " à " + heure;
+    return phrase;
+  }
+
+  Widget setLibelle(int montant, String? unite) {
+    return RichText(
+      textAlign: unite != null ? TextAlign.left : TextAlign.right,
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: formatCurrency.format(montant),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.1,
+            ),
+          ),
+          unite != null
+              ? TextSpan(
+                  text: " " + unite,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w100,
+                    letterSpacing: 0.1,
+                  ),
+                )
+              : TextSpan(),
         ],
       ),
     );
@@ -337,45 +466,14 @@ class _AccueilPageState extends State<AccueilPage> {
     );
   }
 
-  Widget spetiemeLigne() {
-    List<int> text = [1];
+  Widget transactions() {
     return Column(
       children: [
-        for (var i in text)
+        for (var paiement in paiements)
           Container(
-            child: PetitBox("Dépôt : 2021/11/02 à 14:05", 0, "XAF"),
+            child: PetitBox(paiement),
           ),
       ],
-    );
-  }
-
-  Widget setLibelle(int montant, String? unite) {
-    return RichText(
-      textAlign: unite != null ? TextAlign.left : TextAlign.right,
-      text: TextSpan(
-        children: [
-          TextSpan(
-            text: formatCurrency.format(montant),
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.1,
-            ),
-          ),
-          unite != null
-              ? TextSpan(
-                  text: " " + unite,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w100,
-                    letterSpacing: 0.1,
-                  ),
-                )
-              : TextSpan(),
-        ],
-      ),
     );
   }
 
@@ -391,11 +489,46 @@ class _AccueilPageState extends State<AccueilPage> {
             children: [
               premiereLigne(),
               deuxiemeLigne(),
-              troisiemeLigne(),
+              // troisiemeLigne(),
               // quatriemeLigne(),
               // cinquiemeLigne(),
               sixiemeLigne(),
-              spetiemeLigne(),
+              transactions(),
+              Container(
+                alignment: Alignment.topLeft,
+                margin: EdgeInsets.symmetric(vertical: 12),
+                child: TextButton(
+                  onPressed: () => {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HistoriqueTransactionsPage(
+                          utilisateur: utilisateur!,
+                        ),
+                      ),
+                    )
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size(50, 30),
+                    alignment: Alignment.topLeft,
+                  ),
+                  child: Text(
+                    "Voir toutes les transactions",
+                    style: TextStyle(
+                      shadows: [
+                        Shadow(color: Colors.white, offset: Offset(0, -8))
+                      ],
+                      color: Colors.transparent,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w200,
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
+                      decorationThickness: 1,
+                    ),
+                  ),
+                ),
+              ),
             ],
           )),
     );

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:tspay/composants/typographie.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/porte.monnaie.ajout.page.dart';
 import 'package:tspay/porte.monnaie.voir.page.dart';
+import 'package:tspay/services/qrcode.service.dart';
+
+import 'models/utilisateur.model.dart';
+import 'services/utilisateur.service.dart';
 
 class PorteMonnaiePage extends StatefulWidget {
   const PorteMonnaiePage({Key? key}) : super(key: key);
@@ -11,6 +16,25 @@ class PorteMonnaiePage extends StatefulWidget {
 }
 
 class _PorteMonnaiePageState extends State<PorteMonnaiePage> {
+  UtilisateurService utilisateurService = UtilisateurService();
+  Utilisateur? utilisateur = Utilisateur("");
+
+  @override
+  initState() {
+    super.initState();
+    this.init();
+  }
+
+  init() async {
+    utilisateur = await utilisateurService.getLocalUtilisateur();
+    setState(() {});
+  }
+
+  String detecterOperateurMobile(String numero) {
+    QRCodeService qrCodeService = QRCodeService();
+    return qrCodeService.detecterOperateurMobile(numero);
+  }
+
   Widget contenu() {
     return Container(
       decoration: BoxDecoration(
@@ -20,25 +44,14 @@ class _PorteMonnaiePageState extends State<PorteMonnaiePage> {
       child: Column(
         children: [
           Container(
+            alignment: Alignment.topLeft,
             margin: EdgeInsets.only(top: 16),
-            child: Text(
-              "Mes portes-monnaies électroniques",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-              ),
-            ),
+            child: Typographie.appTitre("Mes portes-monnaies électroniques"),
           ),
           Container(
-            margin: EdgeInsets.only(top: 16),
-            child: Text(
-              "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Suspendisse potenti. Morbi vel nulla tortor",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w100,
-              ),
-            ),
+            margin: EdgeInsets.only(top: 8),
+            child: Typographie.sousTitre(
+                "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Suspendisse potenti. Morbi vel nulla tortor"),
           ),
           InkWell(
             onTap: () {
@@ -51,7 +64,10 @@ class _PorteMonnaiePageState extends State<PorteMonnaiePage> {
             },
             child: Container(
               margin: EdgeInsets.only(top: 16),
-              child: Box("Orange Money", "696543495"),
+              child: Box(
+                detecterOperateurMobile(utilisateur!.tel!),
+                utilisateur!.tel!,
+              ),
             ),
           ),
           Container(

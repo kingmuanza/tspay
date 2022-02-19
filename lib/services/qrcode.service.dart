@@ -73,15 +73,41 @@ class QRCodeService {
     List<Paiement> paiementsE = await paiementsRecus(idutilisateur);
 
     paiements.addAll(paiementsR);
-    paiements.addAll(paiementsE);
+    paiementsE.forEach((paiement) {
+      bool ajoutable = true;
+      paiements.forEach((p) {
+        if (p.id == paiement.id) {
+          ajoutable = false;
+        }
+      });
+      if (ajoutable) {
+        paiements.add(paiement);
+      }
+    });
 
     paiements.sort((a, b) {
       return a.dateGeneration!.millisecondsSinceEpoch -
-          b.dateGeneration!.millisecondsSinceEpoch;
+                  b.dateGeneration!.millisecondsSinceEpoch >
+              0
+          ? -1
+          : 1;
     });
 
     print("paiements");
     print(paiements.length);
     return paiements;
+  }
+
+  String detecterOperateurMobile(String numero) {
+    print(numero);
+    String operateur = "Opérateur inconnu";
+    numero = numero.split(' ').join('').split('-').join('');
+    if ((numero[1] == "9") || (numero[1] == "5" && int.parse(numero[2]) < 5)) {
+      operateur = "Orange money";
+    }
+    if (numero[1] == "7" || (numero[1] == "5" && int.parse(numero[2]) > 4)) {
+      operateur = "MTN Mobile Money";
+    }
+    return operateur;
   }
 }

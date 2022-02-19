@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/accueil.page.dart';
+import 'package:tspay/composants/typographie.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/porte.monnaie.page.dart';
 
@@ -28,24 +29,13 @@ class _PorteMonnaieCodePageState extends State<PorteMonnaieCodePage> {
           Container(
             margin: EdgeInsets.only(top: 32),
             width: double.infinity,
-            child: Text(
-              "Code de vérification",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
+            child: Typographie.appTitre("Code de vérification"),
           ),
           Container(
             margin: EdgeInsets.only(top: 8),
             width: double.infinity,
-            child: Text(
+            child: Typographie.appSousTitre(
               "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w100,
-              ),
             ),
           ),
           Container(

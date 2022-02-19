@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/composants/bouton.dart';
 import 'package:tspay/models/paiement.model.dart';
+import 'package:tspay/models/utilisateur.model.dart';
 import 'package:tspay/page.dart';
 import 'package:intl/intl.dart';
 
@@ -112,7 +113,9 @@ class _PaiementEffectuePageState extends State<PaiementEffectuePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HistoriqueTransactionsPage(),
+                          builder: (context) => HistoriqueTransactionsPage(
+                            utilisateur: Utilisateur(""),
+                          ),
                         ),
                       );
                     },

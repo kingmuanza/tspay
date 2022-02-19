@@ -42,67 +42,69 @@ class _MaPageState extends State<MaPage> {
       onWillPop: () async => widget.backable != null ? widget.backable! : false,
       child: Scaffold(
         backgroundColor: Color.fromRGBO(0, 0, 34, 1),
-        body: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(top: 24, left: 24, right: 24),
-                child: widget.child,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 0, left: 24, right: 24),
+                  child: widget.child,
+                ),
               ),
-            ),
-            Container(
-              width: double.infinity,
-              height: 80,
-              padding: EdgeInsets.only(top: 0, bottom: 0),
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(0, 0, 34, 1),
-              ),
-              child: Wrap(
-                children: [
-                  TsTab(
-                    icone: Icons.home_filled,
-                    nom: "Accueil",
-                    actif: widget.index == 0,
-                    page: AccueilPage(),
-                  ),
-                  utilisateur!.commerce != null
-                      ? TsTab(
-                          icone: Icons.qr_code,
-                          caractere: 'PAY',
-                          nom: "Générer",
-                          actif: widget.index == 1,
-                          page: PayPage(),
-                        )
-                      : TsTab(
-                          icone: Icons.qr_code,
-                          nom: "Générer",
-                          actif: widget.index == 1,
-                          page: GenererPage(),
-                        ),
-                  Container(
-                    width: 100,
-                    height: 100,
-                    child: BoutonMilieu(
-                      actif: widget.index == 2,
+              Container(
+                width: double.infinity,
+                height: 80,
+                padding: EdgeInsets.only(top: 0, bottom: 0),
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  color: Color.fromRGBO(0, 0, 34, 1),
+                ),
+                child: Wrap(
+                  children: [
+                    TsTab(
+                      icone: Icons.home_filled,
+                      nom: "Accueil",
+                      actif: widget.index == 0,
+                      page: AccueilPage(),
                     ),
-                  ),
-                  TsTab(
-                    icone: Icons.credit_card,
-                    nom: "Portes Monnaies",
-                    actif: widget.index == 3,
-                    page: PorteMonnaiePage(),
-                  ),
-                  TsTab(
-                    icone: Icons.person,
-                    nom: "Compte",
-                    actif: widget.index == 4,
-                    page: ComptePage(),
-                  ),
-                ],
+                    utilisateur!.commerce != null
+                        ? TsTab(
+                            icone: Icons.qr_code,
+                            caractere: 'PAY',
+                            nom: "Générer",
+                            actif: widget.index == 1,
+                            page: PayPage(),
+                          )
+                        : TsTab(
+                            icone: Icons.qr_code,
+                            nom: "Générer",
+                            actif: widget.index == 1,
+                            page: GenererPage(),
+                          ),
+                    Container(
+                      width: 100,
+                      height: 100,
+                      child: BoutonMilieu(
+                        actif: widget.index == 2,
+                      ),
+                    ),
+                    TsTab(
+                      icone: Icons.credit_card,
+                      nom: "Portes Monnaies",
+                      actif: widget.index == 3,
+                      page: PorteMonnaiePage(),
+                    ),
+                    TsTab(
+                      icone: Icons.person,
+                      nom: "Compte",
+                      actif: widget.index == 4,
+                      page: ComptePage(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

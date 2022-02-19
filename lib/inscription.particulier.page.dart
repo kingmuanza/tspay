@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:tspay/composants/typographie.dart';
 import 'package:tspay/password.page.dart';
 
 import 'composants/bouton.dart';
@@ -74,7 +75,13 @@ class _InscriptionParticulierPageState
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 50.0, bottom: 16),
-                child: EnteteGauche(),
+                child: Column(
+                  children: [
+                    Typographie.titre("Inscription"),
+                    Typographie.sousTitre(
+                        "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor."),
+                  ],
+                ),
               ),
               Champ(
                 labelText: 'Noms',
@@ -212,6 +219,7 @@ class _InscriptionParticulierPageState
       utilisateurService.getFirebaseUtilisateur(utilisateur.id!).then((u) {
         print("utilisatuer trouvé : " + utilisateur.id!);
         print(u);
+        this.showAlertDialog(context);
       }).catchError((e) {
         utilisateurService.setLocalUtilisateur(utilisateur).then((value) {
           Navigator.push(
@@ -280,39 +288,6 @@ class _InscriptionParticulierPageState
       builder: (BuildContext context) {
         return alert;
       },
-    );
-  }
-}
-
-class EnteteGauche extends StatelessWidget {
-  const EnteteGauche({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          child: Text(
-            "Inscription",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor.",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

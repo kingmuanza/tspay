@@ -24,6 +24,7 @@ class _PasswordPageState extends State<PasswordPage> {
   TextEditingController passeController = TextEditingController(text: 'Muanza');
   TextEditingController confirmController =
       TextEditingController(text: 'Muanza');
+  Utilisateur utilisateur = new Utilisateur('');
 
   bool checkedValue = false;
 
@@ -41,7 +42,10 @@ class _PasswordPageState extends State<PasswordPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ConnexionPage(),
+              builder: (context) => ConnexionPage(
+                tel: utilisateur.tel,
+                backable: false,
+              ),
             ),
           );
         },
@@ -127,7 +131,7 @@ class _PasswordPageState extends State<PasswordPage> {
         _passeFormKey.currentState!.validate()) {
       Map<String, dynamic> utilisateurMap = storage.getItem("utilisateur");
       if (utilisateurMap != null) {
-        Utilisateur utilisateur = Utilisateur.fromMap(utilisateurMap);
+        utilisateur = Utilisateur.fromMap(utilisateurMap);
         print(utilisateur.toMap());
 
         var salt10 = await FlutterBcrypt.saltWithRounds(rounds: 4);

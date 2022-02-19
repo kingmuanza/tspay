@@ -204,7 +204,9 @@ class _AccueilPageState extends State<AccueilPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HistoriqueTransactionsPage(),
+            builder: (context) => HistoriqueTransactionsPage(
+              utilisateur: utilisateur!,
+            ),
           ),
         );
       },

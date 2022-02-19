@@ -6,6 +6,7 @@ import 'package:tspay/password.page.dart';
 
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
+import 'composants/typographie.dart';
 import 'models/utilisateur.model.dart';
 import 'services/utilisateur.service.dart';
 
@@ -78,7 +79,13 @@ class _InscriptionProfessionnelPageState
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 50.0, bottom: 16),
-                child: EntetePro(),
+                child: Column(
+                  children: [
+                    Typographie.titre("Inscription"),
+                    Typographie.sousTitre(
+                        "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor."),
+                  ],
+                ),
               ),
               Champ(
                 labelText: 'Nom du commerce',
@@ -213,6 +220,7 @@ class _InscriptionProfessionnelPageState
       utilisateurService.getFirebaseUtilisateur(utilisateur.id!).then((u) {
         print("utilisatuer trouvé : " + utilisateur.id!);
         print(u);
+        this.showAlertDialog(context);
       }).catchError((e) {
         print(e);
         utilisateurService.setLocalUtilisateur(utilisateur).then((value) {
@@ -283,39 +291,6 @@ class _InscriptionProfessionnelPageState
       builder: (BuildContext context) {
         return alert;
       },
-    );
-  }
-}
-
-class EntetePro extends StatelessWidget {
-  const EntetePro({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: double.infinity,
-          child: Text(
-            "Inscription",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 8.0),
-          child: Text(
-            "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti. Morbi vel nulla tortor.",
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

@@ -11,6 +11,7 @@ class Champ extends StatefulWidget {
     this.iconeBouton,
     this.readOnly,
     this.validator,
+    this.onChanged,
     this.isPassword,
   }) : super(key: key);
 
@@ -22,6 +23,7 @@ class Champ extends StatefulWidget {
   bool? readOnly;
   bool? isPassword;
   String? Function(dynamic)? validator;
+  String? Function(dynamic)? onChanged;
 
   @override
   _ChampState createState() => _ChampState();
@@ -34,7 +36,12 @@ class _ChampState extends State<Champ> {
       key: widget.formKey,
       autovalidateMode: AutovalidateMode.disabled,
       child: TextFormField(
-        style: TextStyle(fontSize: 20, color: Colors.white),
+        onChanged: (value) {
+          if (widget.onChanged != null) {
+            widget.onChanged!(value);
+          }
+        },
+        style: TextStyle(fontSize: 16, color: Colors.white),
         validator: (value) {
           if (widget.validator != null) {
             return widget.validator!(value);
@@ -56,7 +63,7 @@ class _ChampState extends State<Champ> {
           suffixIcon: widget.iconeBouton,
           labelText: widget.labelText,
           labelStyle: TextStyle(
-            fontSize: 18.0,
+            fontSize: 16.0,
             color: Colors.white70,
           ),
           enabledBorder: UnderlineInputBorder(

@@ -73,7 +73,7 @@ class Paiement {
         u.idutilisateur = map['idutilisateur'];
       }
       if (map['idpayeur'] != null) {
-        u.idutilisateur = map['idpayeur'];
+        u.idpayeur = map['idpayeur'];
       }
       if (map['nompayeur'] != null) {
         u.nompayeur = map['nompayeur'];

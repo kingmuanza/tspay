@@ -9,7 +9,47 @@ class Typographie {
         libelle,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 30,
+          fontSize: 26,
+        ),
+      ),
+    );
+  }
+
+  static Widget appTitre(String libelle) {
+    return Container(
+      width: double.infinity,
+      child: Text(
+        libelle,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+        ),
+      ),
+    );
+  }
+
+  static Widget appSousTitre(String libelle) {
+    return Container(
+      width: double.infinity,
+      child: Text(
+        libelle,
+        style: TextStyle(
+          color: Colors.white70,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
+
+  static Widget titre2(String libelle) {
+    return Container(
+      width: double.infinity,
+      child: Text(
+        libelle,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.w100,
         ),
       ),
     );
@@ -38,6 +78,8 @@ class Typographie {
         libelle,
         style: TextStyle(
           color: Colors.white,
+          fontWeight: FontWeight.w300,
+          fontSize: 12,
         ),
       ),
     );

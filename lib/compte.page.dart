@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tspay/composants/typographie.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/services/utilisateur.service.dart';
 import 'package:tspay/vendeur.ajouter.page.dart';
@@ -44,7 +45,62 @@ class _ComptePageState extends State<ComptePage> {
             alignment: Alignment.topRight,
             // color: Colors.red,
             child: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                print("showModalBottomSheet");
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(8),
+                        topLeft: Radius.circular(8),
+                      ),
+                    ),
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        height: 200,
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            topLeft: Radius.circular(8),
+                          ),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              const Text(
+                                'Nunc fringilla, tortor eu venenatis tempor, purus sem suscipit ex, et dictum sem ligula ut velit',
+                                textAlign: TextAlign.center,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: 32.0,
+                                ),
+                                child: Bouton(
+                                    largeur: 200,
+                                    nom: "Déconnexion",
+                                    secondaire: true,
+                                    action: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ConnexionPage(
+                                            backable: false,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              },
               icon: Icon(
                 Icons.more_vert_sharp,
                 color: Colors.white,
@@ -108,31 +164,87 @@ class _ComptePageState extends State<ComptePage> {
 
   Widget infosPro() {
     return Container(
-      child: Column(
+      child: Row(
         children: [
-          Container(
-            width: double.infinity,
-            child: Text(
-              "Compte",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-              ),
+          Expanded(
+            child: Column(
+              children: [
+                Typographie.appTitre("Compte"),
+                Typographie.appSousTitre(utilisateur!.commerce != null
+                    ? utilisateur!.commerce!
+                    : "Utilisateur particulier"),
+              ],
             ),
           ),
           Container(
-            width: double.infinity,
-            margin: EdgeInsets.only(bottom: 12),
-            child: Text(
-              utilisateur!.commerce != null
-                  ? utilisateur!.commerce!
-                  : "Utilisateur particulier",
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 24,
-                fontWeight: FontWeight.w100,
+            width: 50,
+            height: 50,
+            alignment: Alignment.topRight,
+            // color: Colors.red,
+            child: IconButton(
+              onPressed: () {
+                print("showModalBottomSheet");
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(8),
+                        topLeft: Radius.circular(8),
+                      ),
+                    ),
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Container(
+                        height: 200,
+                        padding: EdgeInsets.symmetric(horizontal: 32),
+                        decoration: BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8),
+                            topLeft: Radius.circular(8),
+                          ),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              const Text(
+                                'Nunc fringilla, tortor eu venenatis tempor, purus sem suscipit ex, et dictum sem ligula ut velit',
+                                textAlign: TextAlign.center,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  top: 32.0,
+                                ),
+                                child: Bouton(
+                                    largeur: 200,
+                                    nom: "Déconnexion",
+                                    secondaire: true,
+                                    action: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ConnexionPage(
+                                            backable: false,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    });
+              },
+              icon: Icon(
+                Icons.more_vert_sharp,
+                color: Colors.white,
+                size: 30,
               ),
+              padding: EdgeInsets.only(top: 5),
+              constraints: BoxConstraints(),
             ),
           ),
         ],
@@ -149,123 +261,100 @@ class _ComptePageState extends State<ComptePage> {
       child: Column(
         children: [
           premiereLigne(),
-          monID(),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+            child: monID(),
+          ),
           description(),
-          Container(
-            alignment: Alignment.topLeft,
-            child: SizedBox(
-              width: 200,
-              child: Bouton(
-                  largeur: 200,
-                  nom: "Déconnexion",
-                  action: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConnexionPage(
-                          backable: false,
-                        ),
-                      ),
-                    );
-                  }),
-            ),
-          )
         ],
       ),
     );
   }
 
   Widget description() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(
-        vertical: 16,
-      ),
-      child: Column(
-        children: [
-          ligne(),
-          Container(
-            width: double.infinity,
-            child: Text(
-              (utilisateur!.noms != null ? utilisateur!.noms! : "Aucun") +
-                  " " +
-                  (utilisateur!.prenoms != null
-                      ? utilisateur!.prenoms!
-                      : "utilisateur"),
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-              ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HistoriqueTransactionsPage(
+              utilisateur: utilisateur!,
             ),
           ),
-          Container(
-            width: double.infinity,
-            child: Text(
-              "Né le " +
-                  (utilisateur!.datenaiss != null
-                      ? utilisateur!.datenaiss!.toIso8601String().split("T")[0]
-                      : "Aucune date de naissance"),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-              ),
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            child: Text(
-              "Tel :  " +
-                  (utilisateur!.tel != null
-                      ? utilisateur!.tel!
-                      : "Aucun numéro de tel"),
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-              ),
-            ),
-          ),
-          Container(
-            width: double.infinity,
-            child: Text(
-              utilisateur!.commerce != null
-                  ? utilisateur!.commerce!
-                  : "Utilisateur particulier",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () {
-              print('Historique');
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HistoriqueTransactionsPage(),
-                ),
-              );
-            },
-            child: Container(
-              margin: EdgeInsets.only(top: 16, bottom: 16),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        margin: EdgeInsets.symmetric(
+          vertical: 8,
+        ),
+        padding: EdgeInsets.symmetric(
+          vertical: 16,
+          horizontal: 16,
+        ),
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(255, 255, 255, 0.1),
+        ),
+        child: Column(
+          children: [
+            Container(
               width: double.infinity,
               child: Text(
-                "Historique des transactions",
+                (utilisateur!.noms != null ? utilisateur!.noms! : "Aucun") +
+                    " " +
+                    (utilisateur!.prenoms != null
+                        ? utilisateur!.prenoms!
+                        : "utilisateur"),
+                textAlign: TextAlign.left,
                 style: TextStyle(
-                  shadows: [Shadow(color: Colors.white, offset: Offset(0, -8))],
-                  color: Colors.transparent,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w200,
-                  decoration: TextDecoration.underline,
-                  decorationColor: Colors.white,
-                  decorationThickness: 1,
+                  color: Colors.white,
+                  fontSize: 18,
                 ),
               ),
             ),
-          ),
-        ],
+            Container(
+              width: double.infinity,
+              child: Text(
+                "Né le " +
+                    (utilisateur!.datenaiss != null
+                        ? utilisateur!.datenaiss!
+                            .toIso8601String()
+                            .split("T")[0]
+                        : "Aucune date de naissance"),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: Text(
+                "Tel :  " +
+                    (utilisateur!.tel != null
+                        ? utilisateur!.tel!
+                        : "Aucun numéro de tel"),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              child: Text(
+                utilisateur!.commerce != null
+                    ? utilisateur!.commerce!
+                    : "Utilisateur particulier",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -308,16 +397,19 @@ class _ComptePageState extends State<ComptePage> {
       child: Column(
         children: [
           premiereLignePro(),
-          monID(),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+            child: monID(),
+          ),
           description(),
-          ajouter(),
           Container(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
             alignment: Alignment.topLeft,
             child: SizedBox(
-              width: 200,
+              width: double.infinity,
               child: Bouton(
-                  largeur: 200,
-                  nom: "Déconnexion",
+                  largeur: double.infinity,
+                  nom: "Ajouter un vendeur",
                   action: () {
                     Navigator.push(
                       context,
@@ -329,7 +421,7 @@ class _ComptePageState extends State<ComptePage> {
                     );
                   }),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -340,40 +432,6 @@ class _ComptePageState extends State<ComptePage> {
       height: 1,
       color: Colors.white,
       margin: EdgeInsets.only(bottom: 16),
-    );
-  }
-
-  Widget ajouter() {
-    return Column(
-      children: [
-        ligne(),
-        InkWell(
-          onTap: () {
-            print('Historique');
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => VendeurAjouterPage(),
-              ),
-            );
-          },
-          child: Container(
-            margin: EdgeInsets.only(top: 16, bottom: 32),
-            width: double.infinity,
-            child: Text(
-              "Ajouter un vendeur",
-              style: TextStyle(
-                shadows: [Shadow(color: Colors.white, offset: Offset(0, -8))],
-                color: Colors.transparent,
-                fontSize: 16,
-                decoration: TextDecoration.underline,
-                decorationColor: Colors.white,
-                decorationThickness: 1,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 

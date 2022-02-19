@@ -92,6 +92,7 @@ class _GrosBoutonState extends State<GrosBouton> {
       },
       child: Container(
         width: double.infinity,
+        height: 120,
         padding: EdgeInsets.symmetric(
           vertical: 12,
           horizontal: 16,
@@ -108,14 +109,15 @@ class _GrosBoutonState extends State<GrosBouton> {
           mainAxisSize: MainAxisSize.max,
           children: [
             SizedBox(
-              width: 150,
+              width: 140,
               child: Text(
                 widget.titre,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 16,
+                  height: 1,
                 ),
               ),
             ),
@@ -125,6 +127,7 @@ class _GrosBoutonState extends State<GrosBouton> {
                 widget.contenu,
                 style: TextStyle(
                   color: Colors.white,
+                  fontSize: 12,
                 ),
               ),
             ),

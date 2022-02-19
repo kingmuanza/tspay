@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:tspay/composants/bouton.dart';
+import 'package:tspay/historique.transactions.page.dart';
 import 'package:tspay/models/utilisateur.model.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/paiement.effectue.page.dart';
@@ -18,8 +20,23 @@ class PayConfirmationPage extends StatefulWidget {
 }
 
 class _PayConfirmationPageState extends State<PayConfirmationPage> {
+  UtilisateurService utilisateurService = UtilisateurService();
+  Utilisateur? utilisateur = Utilisateur("");
+
+  @override
+  initState() {
+    super.initState();
+    this.init();
+  }
+
+  init() async {
+    utilisateur = await utilisateurService.getLocalUtilisateur();
+    setState(() {});
+  }
+
   double size = 22;
   final formatCurrency = new NumberFormat.decimalPattern("fr_FR");
+
   Widget contenu() {
     return Container(
       decoration: BoxDecoration(
@@ -81,32 +98,34 @@ class _PayConfirmationPageState extends State<PayConfirmationPage> {
             width: double.infinity,
             height: 100,
           ),
-          TextButton(
-            onPressed: () {
-              simuler(widget.paiement).then((value) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PaiementEffectuePage(
-                      paiement: widget.paiement,
-                      entrant: false,
+          Bouton(
+              largeur: 100,
+              nom: "Payer",
+              action: () {
+                payer(widget.paiement).then((value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          HistoriqueTransactionsPage(utilisateur: utilisateur!),
                     ),
-                  ),
-                );
-              });
-            },
-            child: Text("Simuler la suite"),
-          )
+                  );
+                });
+              })
         ],
       ),
     );
   }
 
-  Future simuler(Paiement paiement) async {
-    UtilisateurService utilisateurService = UtilisateurService();
-    Utilisateur? utilisateur = await utilisateurService.getLocalUtilisateur();
+  Future payer(Paiement paiement) async {
     paiement.idpayeur = utilisateur!.id;
+    if (utilisateur!.commerce != null) {
+      paiement.nompayeur = utilisateur!.commerce;
+    } else {
+      paiement.nompayeur = utilisateur!.noms! + " " + utilisateur!.prenoms!;
+    }
     paiement.datePaiement = DateTime.now();
+    paiement.statut = 1;
     QRCodeService qRCodeService = new QRCodeService();
     await qRCodeService.save(paiement);
   }

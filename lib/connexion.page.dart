@@ -15,7 +15,8 @@ import 'models/utilisateur.model.dart';
 
 class ConnexionPage extends StatefulWidget {
   bool? backable = true;
-  ConnexionPage({Key? key, this.backable}) : super(key: key);
+  String? tel = "";
+  ConnexionPage({Key? key, this.backable, this.tel}) : super(key: key);
 
   @override
   _ConnexionPageState createState() => _ConnexionPageState();
@@ -31,6 +32,9 @@ class _ConnexionPageState extends State<ConnexionPage> {
       TextEditingController(text: '+237');
 
   Widget formulaire() {
+    if (widget.tel != null) {
+      numeroController.text = widget.tel!;
+    }
     return Column(
       children: [
         Padding(

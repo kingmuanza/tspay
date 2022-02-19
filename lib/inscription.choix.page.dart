@@ -19,17 +19,20 @@ class _InscriptionChoixPageState extends State<InscriptionChoixPage> {
     return Row(
       children: [
         Expanded(
-          child: Column(
-            children: [
-              Typographie.titre("Inscription"),
-              Typographie.sousTitre(
-                  "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti"),
-            ],
+          child: Container(
+            padding: EdgeInsets.only(right: 12),
+            child: Column(
+              children: [
+                Typographie.titre("Inscription"),
+                Typographie.sousTitre(
+                    "Nullam eget sodales nulla, sed gravida nunc. Suspendisse potenti"),
+              ],
+            ),
           ),
         ),
         Container(
-          width: 100,
-          child: Typographie.logo(80),
+          width: 60,
+          child: Typographie.logo(60),
         ),
       ],
     );

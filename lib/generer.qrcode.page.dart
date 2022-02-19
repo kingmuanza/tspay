@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/paiement.effectue.page.dart';
-
+import 'package:tspay/services/qrcode.service.dart';
+import 'dart:async';
 import 'composants/bouton.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -19,7 +20,10 @@ class GenererQRCodePage extends StatefulWidget {
 class _GenererQRCodePageState extends State<GenererQRCodePage> {
   final formatCurrency = new NumberFormat.decimalPattern("fr_FR");
   String libelle = "Veuillez patienter pendant la génération de votre QR Code ";
+
   bool codeGenere = false;
+  bool isStopped = false;
+
   Widget contenu() {
     double largeur = MediaQuery.of(context).size.width;
     double hauteur = MediaQuery.of(context).size.height;
@@ -103,9 +107,36 @@ class _GenererQRCodePageState extends State<GenererQRCodePage> {
 
   @override
   void initState() {
+    super.initState();
     Future.delayed(const Duration(milliseconds: 1500), () {
       libelle = "Votre code est prêt à être scanné";
       codeGenere = true;
+
+      Timer.periodic(Duration(seconds: 5), (timer) {
+        if (isStopped) {
+          timer.cancel();
+        }
+        print("Recherche d'un paiement");
+
+        QRCodeService qRCodeService = QRCodeService();
+        qRCodeService.recuperer(widget.paiement.id!).then((value) {
+          if (value != null) {
+            if (value.statut > 0) {
+              print("Le QR Code a été scanné et modifié");
+              print(value.toMap());
+              isStopped = true;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PaiementEffectuePage(
+                    paiement: value,
+                  ),
+                ),
+              );
+            }
+          }
+        });
+      });
       setState(() {});
     });
   }

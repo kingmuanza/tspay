@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:tspay/composants/typographie.dart';
+import 'package:tspay/models/paiement.model.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/paiement.effectue.page.dart';
 import 'package:intl/intl.dart';
+import 'package:tspay/services/utilisateur.service.dart';
+
+import 'models/utilisateur.model.dart';
+import 'services/qrcode.service.dart';
 
 class HistoriqueTransactionsPage extends StatefulWidget {
-  const HistoriqueTransactionsPage({Key? key}) : super(key: key);
+  final Utilisateur utilisateur;
+  const HistoriqueTransactionsPage({Key? key, required this.utilisateur})
+      : super(key: key);
 
   @override
   _HistoriqueTransactionsPageState createState() =>
@@ -14,6 +22,39 @@ class HistoriqueTransactionsPage extends StatefulWidget {
 class _HistoriqueTransactionsPageState
     extends State<HistoriqueTransactionsPage> {
   final formatCurrency = new NumberFormat.decimalPattern("fr_FR");
+  UtilisateurService utilisateurService = UtilisateurService();
+  Utilisateur? utilisateur = Utilisateur("");
+
+  List<Paiement> paiements = [];
+
+  @override
+  initState() {
+    super.initState();
+    this.init();
+  }
+
+  init() async {
+    print("historique init");
+    utilisateur = await utilisateurService.getLocalUtilisateur();
+    if (utilisateur != null) {
+      print("historique utilisateur init");
+      if (utilisateur!.id != null) {
+        print("historique utilisateur id init");
+        QRCodeService qrCodeService = QRCodeService();
+        qrCodeService.historique(utilisateur!.id!).then((all) {
+          print("paiements recus...............................1");
+          print("paiements recus...............................2");
+          print("paiements recus...............................3");
+          this.paiements = all;
+          all.forEach((a) {
+            print(a.toMap());
+          });
+          setState(() {});
+        });
+      }
+    }
+  }
+
   Widget contenu() {
     double largeur = MediaQuery.of(context).size.width;
     double hauteur = MediaQuery.of(context).size.height;
@@ -22,30 +63,19 @@ class _HistoriqueTransactionsPageState
         color: Color.fromRGBO(0, 0, 34, 1),
       ),
       alignment: Alignment.center,
+      padding: const EdgeInsets.only(top: 16.0),
       child: Column(
         children: [
+          Typographie.appTitre("Historique des transations"),
           Container(
-            margin: EdgeInsets.only(top: 32),
-            width: double.infinity,
-            child: Text(
-              "Historique des transations",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 8),
-            width: double.infinity,
-            child: Text(
-              "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Nullam eget sodales nulla. Morbi vel nulla tortor",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.w100,
-              ),
-            ),
+            child: Typographie.appSousTitre((widget.utilisateur.noms != null
+                    ? widget.utilisateur.noms!
+                    : "Aucun") +
+                " " +
+                (widget.utilisateur.prenoms != null
+                    ? widget.utilisateur.prenoms!
+                    : "utilisateur")),
+            margin: EdgeInsets.only(bottom: 16.0),
           ),
           transactions(),
         ],
@@ -62,19 +92,58 @@ class _HistoriqueTransactionsPageState
     );
   }
 
+  String libelle(Paiement paiement) {
+    print("paiement.idutilisateur");
+    print(paiement.idutilisateur);
+    print("utilisateur!.id");
+    print(utilisateur!.id);
+    print(paiement.idutilisateur == utilisateur!.id);
+    String phrase = "";
+    String jour = "";
+    String heure = "";
+    if (paiement.datePaiement != null) {
+      jour = paiement.datePaiement!.toIso8601String().split('T')[0];
+      heure =
+          paiement.datePaiement!.toIso8601String().split('T')[1].split(".")[0];
+    } else {
+      jour = paiement.dateGeneration!.toIso8601String().split('T')[0];
+      heure = paiement.dateGeneration!
+          .toIso8601String()
+          .split('T')[1]
+          .split(".")[0];
+    }
+
+    if (paiement.idutilisateur == utilisateur!.id) {
+      phrase = "Reçu le ";
+    } else {
+      phrase = "Payé le ";
+    }
+    phrase = phrase + jour + " à " + heure;
+    return phrase;
+  }
+
   Widget transactions() {
-    List<int> text = [1, 2, 3, 4];
     return Column(
       children: [
-        for (var i in text)
+        for (var paiement in paiements)
           Container(
-            child: PetitBox("Dépôt : 2021/11/02 à 14:05", 750000, "XAF"),
+            child: PetitBox(paiement),
           ),
       ],
     );
   }
 
-  Widget PetitBox(String libelle, int montant, [String? unite]) {
+  Widget PetitBox(Paiement paiement) {
+    String nomRecepteur = "";
+    if (paiement.idutilisateur == utilisateur!.id) {
+      if (paiement.nompayeur != null) {
+        nomRecepteur = paiement.nompayeur!;
+      } else {
+        nomRecepteur = "Payeur non identifié";
+      }
+    } else {
+      nomRecepteur = paiement.nom!;
+    }
     return Container(
       margin: EdgeInsets.only(top: 10),
       padding: EdgeInsets.only(
@@ -83,28 +152,50 @@ class _HistoriqueTransactionsPageState
         bottom: 8,
       ),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(255, 255, 255, 0.1),
+        color: Color.fromRGBO(255, 255, 255, 0.075),
       ),
-      child: Column(
+      child: Row(
         children: [
-          Container(
-            width: double.infinity,
-            child: Text(
-              libelle,
-              textAlign: unite != null ? TextAlign.left : TextAlign.right,
-              style: TextStyle(color: Colors.white),
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  child: Text(
+                    libelle(paiement),
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 0),
+                  width: double.infinity,
+                  child: setLibelle(paiement.montant, "XAF"),
+                ),
+                Container(
+                  width: double.infinity,
+                  child: Text(
+                    nomRecepteur,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top: 0),
-            width: double.infinity,
-            child: setLibelle(montant, unite),
-          ),
-          Container(
-            width: double.infinity,
-            child: Text(
-              "Wax Vestimentaire",
-              style: TextStyle(color: Colors.white),
+            width: 50,
+            child: Icon(
+              paiement.idutilisateur == utilisateur!.id
+                  ? Icons.arrow_downward
+                  : Icons.arrow_upward,
+              color: Colors.white54,
+              size: 30,
             ),
           )
         ],
@@ -121,7 +212,7 @@ class _HistoriqueTransactionsPageState
             text: formatCurrency.format(montant),
             style: TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.1,
             ),
@@ -131,7 +222,7 @@ class _HistoriqueTransactionsPageState
                   text: " " + unite,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.w100,
                     letterSpacing: 0.1,
                   ),

@@ -40,6 +40,8 @@ class _ConnexionPageState extends State<ConnexionPage> {
         Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 80,
@@ -213,6 +215,8 @@ class _ConnexionPageState extends State<ConnexionPage> {
     UtilisateurService utilisateurService = UtilisateurService();
     try {
       Utilisateur utilisateur = await utilisateurService.connexion(id, passe);
+      utilisateur.derniereConnexion = DateTime.now();
+
       return utilisateur;
     } on Exception catch (e) {
       print("Quelles sont les erreurs");

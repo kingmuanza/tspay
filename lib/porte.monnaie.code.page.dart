@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/accueil.page.dart';
 import 'package:tspay/composants/typographie.dart';
+import 'package:tspay/models/porte.monnaie.model.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/porte.monnaie.page.dart';
 
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
+import 'package:localstorage/localstorage.dart';
 
 class PorteMonnaieCodePage extends StatefulWidget {
-  const PorteMonnaieCodePage({Key? key}) : super(key: key);
+  final PorteMonnaie porteMonnaie;
+  final String code;
+  const PorteMonnaieCodePage({
+    Key? key,
+    required this.porteMonnaie,
+    required this.code,
+  }) : super(key: key);
 
   @override
   _PorteMonnaieCodePageState createState() => _PorteMonnaieCodePageState();
 }
 
 class _PorteMonnaieCodePageState extends State<PorteMonnaieCodePage> {
-  TextEditingController montantController =
-      TextEditingController(text: '-  -  -  -');
+  TextEditingController montantController = TextEditingController(text: '');
+  final LocalStorage storage = new LocalStorage('tspay');
 
   Widget contenu() {
     return Container(
@@ -53,12 +61,19 @@ class _PorteMonnaieCodePageState extends State<PorteMonnaieCodePage> {
               largeur: 120,
               nom: "Valider",
               action: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PorteMonnaiePage(),
-                  ),
-                );
+                String code = storage.getItem("tspaycode");
+                if (montantController.text == code) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PorteMonnaiePage(),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Code incorrect")),
+                  );
+                }
               },
             ),
           ),

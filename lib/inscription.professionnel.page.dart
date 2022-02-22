@@ -125,6 +125,8 @@ class _InscriptionProfessionnelPageState
                 ),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 80,

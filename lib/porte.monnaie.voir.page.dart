@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:tspay/page.dart';
+import 'package:tspay/porte.monnaie.page.dart';
+import 'package:tspay/services/porte.monnaie.service.dart';
+import 'package:tspay/services/qrcode.service.dart';
 
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
+import 'models/porte.monnaie.model.dart';
 
 class PorteMonnaieVoirPage extends StatefulWidget {
-  const PorteMonnaieVoirPage({Key? key}) : super(key: key);
+  final PorteMonnaie porteMonnaie;
+  const PorteMonnaieVoirPage({Key? key, required this.porteMonnaie})
+      : super(key: key);
 
   @override
   _PorteMonnaieVoirPageState createState() => _PorteMonnaieVoirPageState();
@@ -18,6 +24,9 @@ class _PorteMonnaieVoirPageState extends State<PorteMonnaieVoirPage> {
   TextEditingController numeroController =
       TextEditingController(text: '6 76 54 34 95');
 
+  PorteMonnaieService porteMonnaieService = PorteMonnaieService();
+  QRCodeService qRCodeService = QRCodeService();
+
   Widget contenu() {
     return Container(
       decoration: BoxDecoration(
@@ -29,7 +38,7 @@ class _PorteMonnaieVoirPageState extends State<PorteMonnaieVoirPage> {
           Container(
             margin: EdgeInsets.only(top: 16),
             child: Text(
-              "Porte-monnaie électronique 6965454322",
+              "Porte-monnaie électronique " + widget.porteMonnaie.numero!,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
@@ -51,7 +60,8 @@ class _PorteMonnaieVoirPageState extends State<PorteMonnaieVoirPage> {
             width: double.infinity,
             margin: EdgeInsets.symmetric(vertical: 24),
             child: Text(
-              "MTN Cameroun",
+              qRCodeService
+                  .detecterOperateurMobile(widget.porteMonnaie.numero!),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 22,
@@ -66,7 +76,16 @@ class _PorteMonnaieVoirPageState extends State<PorteMonnaieVoirPage> {
             child: Bouton(
               largeur: 200,
               nom: "Supprimer",
-              action: () {},
+              action: () {
+                porteMonnaieService.supprimer(widget.porteMonnaie).then(
+                      (value) => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PorteMonnaiePage(),
+                        ),
+                      ),
+                    );
+              },
             ),
           ),
         ],

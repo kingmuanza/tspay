@@ -116,6 +116,8 @@ class _InscriptionParticulierPageState
                 ),
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: 80,

@@ -10,6 +10,8 @@ class Utilisateur {
   String? noms;
   String? prenoms;
   DateTime? datenaiss;
+  DateTime? dateInscription = DateTime.now();
+  DateTime? derniereConnexion = DateTime.now();
   String? profession;
   String? pays;
   String? tel;
@@ -45,6 +47,11 @@ class Utilisateur {
       'commerce': commerce,
       'prenoms': prenoms,
       'datenaiss': datenaiss != null ? datenaiss!.toIso8601String() : null,
+      'derniereConnexion': derniereConnexion != null
+          ? derniereConnexion!.toIso8601String()
+          : null,
+      'dateInscription':
+          dateInscription != null ? dateInscription!.toIso8601String() : null,
       'profession': profession,
       'professionnel': professionnel,
       'pays': pays,
@@ -78,6 +85,12 @@ class Utilisateur {
       }
       if (map['datenaiss'] != null) {
         u.datenaiss = DateTime.parse(map['datenaiss']);
+      }
+      if (map['dateInscription'] != null) {
+        u.dateInscription = DateTime.parse(map['dateInscription']);
+      }
+      if (map['derniereConnexion'] != null) {
+        u.derniereConnexion = DateTime.parse(map['derniereConnexion']);
       }
       if (map['profession'] != null) {
         u.profession = map['profession'];

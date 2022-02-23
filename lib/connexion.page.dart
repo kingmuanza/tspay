@@ -6,6 +6,7 @@ import 'package:localstorage/localstorage.dart';
 import 'package:tspay/accueil.page.dart';
 import 'package:tspay/composants/champ.dart';
 import 'package:tspay/inscription.choix.page.dart';
+import 'package:tspay/password.oublie.numero.page.dart';
 import 'package:tspay/services/utilisateur.service.dart';
 
 import 'composants/bouton.dart';
@@ -103,11 +104,11 @@ class _ConnexionPageState extends State<ConnexionPage> {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                    print('Inscrivez-vous ici');
+                    print('PasswordOublieNumeroPage');
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => InscriptionChoixPage(),
+                        builder: (context) => PasswordOublieNumeroPage(),
                       ),
                     );
                   }),

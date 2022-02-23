@@ -51,7 +51,11 @@ class _AccueilPageState extends State<AccueilPage> {
             solde = totalPaiements(paiementsR) - totalPaiements(paiementsE);
 
             qrCodeService.historique(utilisateur!.id!).then((all3) {
-              this.paiements = all3.sublist(0, 2);
+              if (all3.length > 2) {
+                this.paiements = all3.sublist(0, 2);
+              } else {
+                this.paiements = all3;
+              }
               setState(() {});
             });
           });

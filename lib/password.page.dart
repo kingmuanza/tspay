@@ -9,7 +9,8 @@ import 'composants/champ.dart';
 import 'models/utilisateur.model.dart';
 
 class PasswordPage extends StatefulWidget {
-  const PasswordPage({Key? key}) : super(key: key);
+  bool? changement;
+  PasswordPage({Key? key, this.changement}) : super(key: key);
 
   @override
   _PasswordPageState createState() => _PasswordPageState();
@@ -54,7 +55,9 @@ class _PasswordPageState extends State<PasswordPage> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Votre compte a bien été créé !"),
+      title: Text(widget.changement != null && widget.changement!
+          ? "Votre mot de passe a bien été modifié"
+          : "Votre compte a bien été créé !"),
       content: Text(
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non convallis erat, non fringilla orci. Etiam lobortis nisl ut turpis lacinia, vitae feugiat purus tristique."),
       actions: [

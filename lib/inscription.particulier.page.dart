@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:tspay/composants/typographie.dart';
+import 'package:tspay/inscription.code.page.dart';
 import 'package:tspay/password.page.dart';
+import 'package:http/http.dart' as http;
 
 import 'composants/bouton.dart';
 import 'composants/champ.dart';
@@ -19,6 +23,7 @@ class InscriptionParticulierPage extends StatefulWidget {
 
 class _InscriptionParticulierPageState
     extends State<InscriptionParticulierPage> {
+  final LocalStorage storage = new LocalStorage('tspay');
   final _parrainFormKey = GlobalKey<FormState>();
   final _numeroFormKey = GlobalKey<FormState>();
   final _datenaissFormKey = GlobalKey<FormState>();
@@ -196,6 +201,42 @@ class _InscriptionParticulierPageState
     );
   }
 
+  String generateCode() {
+    Random random = new Random();
+    int code = random.nextInt(9000) + 1000;
+    storage.setItem("tspaycode", code.toString());
+    print('tspaycode');
+    print(code.toString());
+    print('tspaycode');
+    print(code.toString());
+    print('tspaycode');
+    print(code.toString());
+    return code.toString();
+  }
+
+  sendSMSviaAPI(String codeEnvoyee, String numero) async {
+    var code = codeEnvoyee;
+
+    var url = Uri.https('moneytrans.waveslights.com',
+        '/administration/sendsms2.php', {'numero': numero, 'code': code});
+
+    try {
+      var response = await http.get(url);
+      print('FIN de l envoiSMSEtValidation');
+      if (response.statusCode == 200) {
+        var jsonResponse = response.body;
+        print(jsonResponse);
+      } else {
+        print('Request failed with status: ${response.statusCode}.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erreur lors de l'envoi du SMS")),
+        );
+      }
+    } catch (e) {
+      // print(e);
+    }
+  }
+
   onFormSubmit() async {
     if (_datenaissFormKey.currentState!.validate() &&
         _emailFormKey.currentState!.validate() &&
@@ -224,10 +265,14 @@ class _InscriptionParticulierPageState
         this.showAlertDialog(context);
       }).catchError((e) {
         utilisateurService.setLocalUtilisateur(utilisateur).then((value) {
+          String codeEnvoyee = generateCode();
+          sendSMSviaAPI(codeEnvoyee, utilisateur.id!);
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => PasswordPage(),
+              builder: (context) => InscriptionCodePage(
+                code: codeEnvoyee,
+              ),
             ),
           );
         });

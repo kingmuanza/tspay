@@ -66,16 +66,43 @@ class _HistoriqueTransactionsPageState
       padding: const EdgeInsets.only(top: 16.0),
       child: Column(
         children: [
-          Typographie.appTitre("Historique des transations"),
-          Container(
-            child: Typographie.appSousTitre((widget.utilisateur.noms != null
-                    ? widget.utilisateur.noms!
-                    : "Aucun") +
-                " " +
-                (widget.utilisateur.prenoms != null
-                    ? widget.utilisateur.prenoms!
-                    : "utilisateur")),
-            margin: EdgeInsets.only(bottom: 16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 30,
+                margin: EdgeInsets.only(bottom: 16.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Typographie.appTitre("Historique des transations"),
+                    Container(
+                      child: Typographie.appSousTitre(
+                          (widget.utilisateur.noms != null
+                                  ? widget.utilisateur.noms!
+                                  : "Aucun") +
+                              " " +
+                              (widget.utilisateur.prenoms != null
+                                  ? widget.utilisateur.prenoms!
+                                  : "utilisateur")),
+                      margin: EdgeInsets.only(bottom: 16.0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           transactions(),
         ],

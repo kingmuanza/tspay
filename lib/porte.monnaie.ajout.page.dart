@@ -50,15 +50,41 @@ class _PorteMonnaiePageAjoutState extends State<PorteMonnaiePageAjout> {
         color: Color.fromRGBO(0, 0, 34, 1),
       ),
       alignment: Alignment.center,
+      margin: EdgeInsets.only(top: 16),
       child: Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(top: 16),
-            child:
-                Typographie.appTitre("Ajouter un porte-monnaie électronique"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 30,
+                margin: EdgeInsets.only(bottom: 0.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Container(
+                      child: Typographie.appTitre(
+                          "Ajouter un porte-monnaie électronique"),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           Container(
-            margin: EdgeInsets.only(top: 8, bottom: 16),
+            margin: EdgeInsets.only(top: 16, bottom: 16),
             child: Typographie.appSousTitre(
                 "Aenean metus metus, fringilla id nisl ut, laoreet interdum eros. Suspendisse potenti. Morbi vel nulla tortor"),
           ),

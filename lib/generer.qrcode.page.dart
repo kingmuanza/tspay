@@ -7,6 +7,7 @@ import 'composants/bouton.dart';
 import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import 'composants/typographie.dart';
 import 'models/paiement.model.dart';
 
 class GenererQRCodePage extends StatefulWidget {
@@ -34,21 +35,38 @@ class _GenererQRCodePageState extends State<GenererQRCodePage> {
       alignment: Alignment.center,
       child: Column(
         children: [
-          Container(
-            margin: EdgeInsets.only(
-              top: 32,
-              left: 0,
-            ),
-            width: double.infinity,
-            child: Text(
-              "Paiement de " +
-                  formatCurrency.format(widget.paiement.montant) +
-                  " XAF",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 30,
+                margin: EdgeInsets.only(bottom: 0.0),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white54,
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
               ),
-            ),
+              Expanded(
+                child: Column(
+                  children: [
+                    Container(
+                      child: Typographie.appTitre(
+                        "Paiement de " +
+                            formatCurrency.format(widget.paiement.montant) +
+                            " XAF",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           Container(
             margin: EdgeInsets.only(

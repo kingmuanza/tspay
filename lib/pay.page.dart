@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:tspay/composants/typographie.dart';
 import 'package:tspay/page.dart';
 import 'package:tspay/paiement.effectue.page.dart';
 import 'package:tspay/pay.confirmation.dart';
@@ -29,13 +30,7 @@ class _PayPageState extends State<PayPage> {
           Container(
             padding: EdgeInsets.only(top: 16),
             width: double.infinity,
-            child: Text(
-              "Scanner un QR Code",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-              ),
-            ),
+            child: Typographie.appTitre("Scanner un QR Code"),
           ),
           Container(
             padding: EdgeInsets.only(
@@ -43,11 +38,8 @@ class _PayPageState extends State<PayPage> {
               bottom: 32,
             ),
             width: double.infinity,
-            child: Text(
+            child: Typographie.appSousTitre(
               "Nunc fringilla, tortor eu venenatis tempor, purus sem suscipit ex, et dictum sem ligula ut velit. ",
-              style: TextStyle(
-                color: Colors.white,
-              ),
             ),
           ),
           bordureHaute(),

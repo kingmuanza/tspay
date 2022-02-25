@@ -44,6 +44,8 @@ class _PayConfirmationPageState extends State<PayConfirmationPage> {
       ),
       alignment: Alignment.center,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
               padding: EdgeInsets.only(top: 32),
@@ -98,20 +100,24 @@ class _PayConfirmationPageState extends State<PayConfirmationPage> {
             width: double.infinity,
             height: 100,
           ),
-          Bouton(
-              largeur: 100,
-              nom: "Payer",
-              action: () {
-                payer(widget.paiement).then((value) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          HistoriqueTransactionsPage(utilisateur: utilisateur!),
-                    ),
-                  );
-                });
-              })
+          Container(
+            width: 105,
+            alignment: Alignment.topLeft,
+            child: Bouton(
+                largeur: 100,
+                nom: "Payer",
+                action: () {
+                  payer(widget.paiement).then((value) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HistoriqueTransactionsPage(
+                            utilisateur: utilisateur!),
+                      ),
+                    );
+                  });
+                }),
+          )
         ],
       ),
     );
@@ -125,6 +131,7 @@ class _PayConfirmationPageState extends State<PayConfirmationPage> {
               "Vous ne pouvez pas effectuer un paiement sur votre propre compte"),
         ),
       );
+      throw new Error();
     } else {
       paiement.idpayeur = utilisateur!.id;
       if (utilisateur!.commerce != null) {

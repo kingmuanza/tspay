@@ -48,6 +48,7 @@ dependencies:
   vibration: ^1.7.3
   uuid: ^3.0.5
   google_fonts: 2.2.0
+  confirm_dialog: ^1.0.1
 
 dev_dependencies:
   flutter_launcher_icons: "^0.9.2"

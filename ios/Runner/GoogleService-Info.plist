@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>960076920763-4b1tets2kh90nd8tg78b1em6vndsjth4.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.960076920763-4b1tets2kh90nd8tg78b1em6vndsjth4</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBMTIl9Mmm6mhk_s58jc3DKpxAygSxKvIs</string>
+	<key>GCM_SENDER_ID</key>
+	<string>960076920763</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.tspay.tspay</string>
+	<key>PROJECT_ID</key>
+	<string>ts-pay</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ts-pay.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:960076920763:ios:9138b47e0f0a594c61369e</string>
+</dict>
+</plist>

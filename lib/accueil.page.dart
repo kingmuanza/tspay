@@ -309,7 +309,11 @@ class _AccueilPageState extends State<AccueilPage> {
         nomRecepteur = "Payeur non identifié";
       }
     } else {
-      nomRecepteur = paiement.nom!;
+      if (paiement.nom != null) {
+        nomRecepteur = paiement.nom!;
+      } else {
+        nomRecepteur = "";
+      }
     }
     return Container(
       margin: EdgeInsets.only(top: 10),

@@ -71,7 +71,7 @@ class _MaPageState extends State<MaPage> {
                         ? TsTab(
                             icone: Icons.qr_code,
                             caractere: 'PAY',
-                            nom: "Générer",
+                            nom: "Payer",
                             actif: widget.index == 1,
                             page: PayPage(),
                           )
